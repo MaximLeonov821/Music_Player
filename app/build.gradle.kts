@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.musicplayer"
+    namespace = "com.example.futurepast"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.musicplayer"
+        applicationId = "com.example.futurepast"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
