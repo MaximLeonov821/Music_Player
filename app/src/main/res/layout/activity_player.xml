@@ -17,7 +17,9 @@
         android:src="@drawable/ic_cover_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:contentDescription="Обложка песни"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -35,14 +37,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Музыка" />
+            android:text="Музыка"
+            tools:ignore="HardcodedText" />
 
         <TextView
             style="@style/TextViewAuthorStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="Автор" />
+            android:text="Автор"
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 
@@ -69,47 +73,62 @@
         app:layout_constraintTop_toBottomOf="@+id/materialToolbar">
 
         <ImageButton
+            app:tint="@color/white"
             android:id="@+id/RefreshBtn"
-            android:layout_width="45dp"
-            android:layout_height="60dp"
-            style="@style/SmallImageButton"
-            android:src="@drawable/ic_refresh" />
-
-        <ImageButton
-            android:id="@+id/RewindBackBtn"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="25dp"
-            style="@style/SmallImageButton"
-            android:src="@drawable/ic_rewind_back" />
-
-        <ImageButton
-            android:id="@+id/PauseBtn"
-            android:layout_width="45dp"
-            android:layout_height="60dp"
-            style="@style/SmallImageButton"
-            android:src="@drawable/ic_pause" />
-
-        <ImageButton
-            android:id="@+id/RewindRightBtn"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="25dp"
-            style="@style/SmallImageButton"
-            android:src="@drawable/ic_rewind_right" />
-
-        <ImageButton
-            android:id="@+id/HurtBtn"
             android:layout_width="50dp"
             android:layout_height="60dp"
             style="@style/SmallImageButton"
-            android:src="@drawable/ic_hurt" />
+            android:contentDescription="Перемешать треки"
+            android:src="@drawable/ic_refresh"
+            tools:ignore="HardcodedText" />
+
+        <ImageButton
+            app:tint="@color/white"
+            android:id="@+id/RewindBackBtn"
+            android:layout_width="65dp"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="23dp"
+            style="@style/SmallImageButton"
+            android:contentDescription="Переключить трек назад"
+            android:src="@drawable/ic_rewind_back"
+            tools:ignore="HardcodedText" />
+
+        <ImageButton
+            app:tint="@color/white"
+            android:id="@+id/PauseBtn"
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+            style="@style/SmallImageButton"
+            android:contentDescription="Пауза"
+            android:src="@drawable/ic_pause"
+            tools:ignore="HardcodedText" />
+
+        <ImageButton
+            app:tint="@color/white"
+            android:id="@+id/RewindRightBtn"
+            android:layout_width="65dp"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="23dp"
+            style="@style/SmallImageButton"
+            android:contentDescription="Переключить трек вперед"
+            android:src="@drawable/ic_rewind_right"
+            tools:ignore="HardcodedText" />
+
+        <ImageButton
+            app:tint="@color/white"
+            android:id="@+id/HurtBtn"
+            android:layout_width="55dp"
+            android:layout_height="60dp"
+            style="@style/SmallImageButton"
+            android:contentDescription="Добавить в избранное"
+            android:src="@drawable/ic_hurt"
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="140dp"
         android:orientation="horizontal"
         android:gravity="center_horizontal|center_vertical"
         android:background="@color/BackgroundBottom"
@@ -123,7 +142,9 @@
             android:layout_width="90dp"
             android:layout_height="60dp"
             style="@style/SmallImageButton"
-            android:src="@drawable/ic_main" />
+            android:contentDescription="Главная страница с музыкой"
+            android:src="@drawable/ic_main"
+            tools:ignore="HardcodedText" />
 
         <ImageButton
             android:id="@+id/MusicBtn"
@@ -131,14 +152,18 @@
             android:layout_height="60dp"
             android:src="@drawable/ic_music"
             style="@style/SmallImageButton"
-            android:layout_marginHorizontal="43dp"/>
+            android:contentDescription="Играющая музыка"
+            android:layout_marginHorizontal="43dp"
+            tools:ignore="HardcodedText" />
 
         <ImageButton
             android:id="@+id/HurtOrangeBtn"
             android:layout_width="90dp"
             android:layout_height="60dp"
             style="@style/SmallImageButton"
-            android:src="@drawable/ic_hurt_orange" />
+            android:contentDescription="Избранное"
+            android:src="@drawable/ic_hurt_orange"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
