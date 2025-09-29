@@ -67,7 +67,7 @@
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="45dp"
         android:orientation="horizontal"
-        android:gravity="center_horizontal|center_vertical"
+        android:gravity="center_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialToolbar">
@@ -87,29 +87,30 @@
             android:id="@+id/RewindBackBtn"
             android:layout_width="65dp"
             android:layout_height="60dp"
-            android:layout_marginHorizontal="23dp"
             style="@style/SmallImageButton"
+            android:layout_marginStart="15dp"
             android:contentDescription="Переключить трек назад"
             android:src="@drawable/ic_rewind_back"
             tools:ignore="HardcodedText" />
 
-        <ImageButton
-            app:tint="@color/white"
-            android:id="@+id/PauseBtn"
-            android:layout_width="50dp"
-            android:layout_height="60dp"
-            style="@style/SmallImageButton"
-            android:contentDescription="Пауза"
-            android:src="@drawable/ic_pause"
-            tools:ignore="HardcodedText" />
+            <ImageButton
+                app:tint="@color/white"
+                android:id="@+id/PlayPauseSwitcher"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                style="@style/SmallImageButton"
+                android:layout_marginHorizontal="30dp"
+                android:contentDescription="Продолжить музыку"
+                android:src="@drawable/ic_play"
+                tools:ignore="HardcodedText" />
 
         <ImageButton
             app:tint="@color/white"
             android:id="@+id/RewindRightBtn"
             android:layout_width="65dp"
             android:layout_height="60dp"
-            android:layout_marginHorizontal="23dp"
             style="@style/SmallImageButton"
+            android:layout_marginEnd="15dp"
             android:contentDescription="Переключить трек вперед"
             android:src="@drawable/ic_rewind_right"
             tools:ignore="HardcodedText" />
