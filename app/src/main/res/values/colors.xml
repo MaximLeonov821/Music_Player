@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="BackgroundRoot">#A19A52</color>
+    <color name="BackgroundRoot">#89541E</color>
     <color name="BackgroundBottom">#000000</color>
+    <color name="BackgroundMusic">#A75233</color>
 </resources>
