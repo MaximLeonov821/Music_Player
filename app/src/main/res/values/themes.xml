@@ -5,5 +5,7 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.FuturePast" parent="Base.Theme.FuturePast" />
+    <style name="Theme.FuturePast" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/BackgroundRoot</item>
+    </style>
 </resources>
