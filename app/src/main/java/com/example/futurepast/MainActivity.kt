@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
                 finish()
             }
-            selectButton(binding.MainBtn)
         }
 
         binding.MusicBtn.setOnClickListener {
@@ -55,6 +54,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun selectButton(button: View) {
+        if (selectedButton == button) {
+            return
+        }
         selectedButton?.startAnimation(scaleDown)
         button.startAnimation(scaleUp)
         selectedButton = button
