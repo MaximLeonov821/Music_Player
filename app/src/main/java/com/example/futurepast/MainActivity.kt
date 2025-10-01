@@ -3,7 +3,6 @@ package com.example.futurepast
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
-import android.content.Intent
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -20,13 +19,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (savedInstanceState == null) {
+            replaceFragment(MainFragment(), "MAIN")
+        }
+
         binding.MainBtn.setOnClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-            if (currentFragment != null) {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-                finish()
+            if (currentFragment != null && currentFragment.tag != "MAIN") {
+                replaceFragment(MainFragment(), "MAIN")
             }
         }
 
