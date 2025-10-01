@@ -39,15 +39,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.MusicBtn.setOnClickListener {
-            replaceFragment(PlayerFragment(), "PLAYER")
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+            if (currentFragment != null && currentFragment.tag != "PLAYER") {
+                replaceFragment(PlayerFragment(), "PLAYER")
+            }
             selectButton(binding.MusicBtn)
         }
 
         binding.HurtOrangeBtn.setOnClickListener {
-            replaceFragment(FavouritesFragment(), "FAVOURITES")
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+            if (currentFragment != null && currentFragment.tag != "FAVOURITES") {
+                replaceFragment(FavouritesFragment(), "FAVOURITES")
+            }
             selectButton(binding.HurtOrangeBtn)
         }
-
     }
 
     private fun selectButton(button: View) {
