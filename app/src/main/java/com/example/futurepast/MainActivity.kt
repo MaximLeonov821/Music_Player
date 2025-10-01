@@ -21,25 +21,22 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             replaceFragment(MainFragment(), "MAIN")
+            selectedButton = binding.MainBtn
+            binding.MainBtn.startAnimation(
+                AnimationUtils.loadAnimation(this, R.anim.scale_up)
+            )
         }
+
+        scaleUp = AnimationUtils.loadAnimation(this, R.anim.scale_up)
+        scaleDown = AnimationUtils.loadAnimation(this, R.anim.scale_down)
 
         binding.MainBtn.setOnClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
             if (currentFragment != null && currentFragment.tag != "MAIN") {
                 replaceFragment(MainFragment(), "MAIN")
             }
+            selectButton(binding.MainBtn)
         }
-
-        binding.MusicBtn.setOnClickListener {
-            replaceFragment(PlayerFragment(), "PLAYER")
-        }
-
-        binding.HurtOrangeBtn.setOnClickListener {
-            replaceFragment(FavouritesFragment(), "FAVOURITES")
-        }
-
-        scaleUp = AnimationUtils.loadAnimation(this, R.anim.scale_up)
-        scaleDown = AnimationUtils.loadAnimation(this, R.anim.scale_down)
 
         binding.MusicBtn.setOnClickListener {
             replaceFragment(PlayerFragment(), "PLAYER")
@@ -54,9 +51,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun selectButton(button: View) {
-        if (selectedButton == button) {
-            return
-        }
+        if (selectedButton == button) return
+        binding.MainBtn.clearAnimation()
+        binding.MusicBtn.clearAnimation()
+        binding.HurtOrangeBtn.clearAnimation()
         selectedButton?.startAnimation(scaleDown)
         button.startAnimation(scaleUp)
         selectedButton = button
