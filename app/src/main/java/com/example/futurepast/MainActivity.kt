@@ -64,19 +64,34 @@ class MainActivity : AppCompatActivity() {
 
     fun replaceFragment(fragment: Fragment, tag: String) {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-        if (currentFragment != null && currentFragment.tag == tag) return
-
         val (enterAnim, exitAnim, popEnterAnim, popExitAnim) = when {
-            currentFragment == null || currentFragment.tag == "PLAYER" && tag == "FAVOURITES" -> {
+            currentFragment == null -> {
+                Quad(0, 0, 0, 0)
+            }
+            currentFragment.tag == "PLAYER" && tag == "FAVOURITES" -> {
                 Quad(R.anim.slide_in_right, R.anim.slide_out_left,
                     R.anim.slide_in_left, R.anim.slide_out_right)
             }
-
-            currentFragment?.tag == "FAVOURITES" && tag == "PLAYER" -> {
+            currentFragment.tag == "FAVOURITES" && tag == "PLAYER" -> {
                 Quad(R.anim.slide_in_left, R.anim.slide_out_right,
                     R.anim.slide_in_right, R.anim.slide_out_left)
             }
-
+            currentFragment.tag == "MAIN" && tag == "PLAYER" -> {
+                Quad(R.anim.slide_in_right, R.anim.slide_out_left,
+                    R.anim.slide_in_left, R.anim.slide_out_right)
+            }
+            currentFragment.tag == "PLAYER" && tag == "MAIN" -> {
+                Quad(R.anim.slide_in_left, R.anim.slide_out_right,
+                    R.anim.slide_in_right, R.anim.slide_out_left)
+            }
+            currentFragment.tag == "MAIN" && tag == "FAVOURITES" -> {
+                Quad(R.anim.slide_in_right, R.anim.slide_out_left,
+                    R.anim.slide_in_left, R.anim.slide_out_right)
+            }
+            currentFragment.tag == "FAVOURITES" && tag == "MAIN" -> {
+                Quad(R.anim.slide_in_left, R.anim.slide_out_right,
+                    R.anim.slide_in_right, R.anim.slide_out_left)
+            }
             else -> {
                 Quad(R.anim.slide_in_right, R.anim.slide_out_left,
                     R.anim.slide_in_left, R.anim.slide_out_right)
