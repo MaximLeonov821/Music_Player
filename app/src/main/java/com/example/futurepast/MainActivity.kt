@@ -4,10 +4,16 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import com.example.futurepast.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
+    private var selectedButton: View? = null
+    private lateinit var scaleUp: Animation
+    private lateinit var scaleDown: Animation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +28,7 @@ class MainActivity : AppCompatActivity() {
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
                 finish()
             }
+            selectButton(binding.MainBtn)
         }
 
         binding.MusicBtn.setOnClickListener {
@@ -31,6 +38,26 @@ class MainActivity : AppCompatActivity() {
         binding.HurtOrangeBtn.setOnClickListener {
             replaceFragment(FavouritesFragment(), "FAVOURITES")
         }
+
+        scaleUp = AnimationUtils.loadAnimation(this, R.anim.scale_up)
+        scaleDown = AnimationUtils.loadAnimation(this, R.anim.scale_down)
+
+        binding.MusicBtn.setOnClickListener {
+            replaceFragment(PlayerFragment(), "PLAYER")
+            selectButton(binding.MusicBtn)
+        }
+
+        binding.HurtOrangeBtn.setOnClickListener {
+            replaceFragment(FavouritesFragment(), "FAVOURITES")
+            selectButton(binding.HurtOrangeBtn)
+        }
+
+    }
+
+    private fun selectButton(button: View) {
+        selectedButton?.startAnimation(scaleDown)
+        button.startAnimation(scaleUp)
+        selectedButton = button
     }
 
     fun replaceFragment(fragment: Fragment, tag: String) {
