@@ -6,10 +6,10 @@
     <color name="BackgroundBottom">#000000</color>
     <color name="BackgroundMusic">#A75233</color>
 
-    <color name="background_dark">#F5F0E6</color>
-    <color name="background_bottom_dark">#333333</color>
+    <color name="BackgroundDark">#1E2A3A</color>
+    <color name="BackgroundBottomDark">#0F1B2D</color>
 
 
-    <color name="BackgroundLight">#1E2A3A</color>
-    <color name="BackgroundBottomLight">#0F1B2D</color>
+    <color name="BackgroundLight">#F5F0E6</color>
+    <color name="BackgroundBottomLight">#333333</color>
 </resources>

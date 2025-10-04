@@ -24,7 +24,6 @@ class PlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         applyTheme()
 
         binding.PlayPauseSwitcher.setOnClickListener {
@@ -34,21 +33,16 @@ class PlayerFragment : Fragment() {
     }
 
     fun applyTheme() {
-        binding.player.setBackgroundResource(ThemeManager.getBackgroundColorRes())
-
-        binding.linearLayout3.setBackgroundResource(ThemeManager.getBottomBarColorRes())
-
-        updateFragmentIcons()
-    }
-
-    private fun updateFragmentIcons() {
-
-        binding.MainBtn?.setImageResource(ThemeManager.getMainIconRes())
-        binding.MusicBtn?.setImageResource(ThemeManager.getMusicIconRes())
-        binding.HurtOrangeBtn?.setImageResource(ThemeManager.getHurtOrangeIconRes())
+        binding.PlayerContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+        binding.RefreshBtn?.setImageResource(ThemeManager.getRefreshIconRes())
+        binding.RewindBackBtn?.setImageResource(ThemeManager.getRewindBackIconRes())
+        binding.RewindRightBtn?.setImageResource(ThemeManager.getRewindRightIconRes())
+        binding.HurtBtn?.setImageResource(ThemeManager.getHeartIconRes())
+        binding.imageView?.setImageResource(ThemeManager.getCoverBackgroundIconRes())
 
         updatePlayPauseButton()
     }
+
 
     private fun updatePlayPauseButton() {
         val iconRes = if (isPlaying) {

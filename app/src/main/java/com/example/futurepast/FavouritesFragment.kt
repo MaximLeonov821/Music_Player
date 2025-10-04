@@ -26,11 +26,7 @@ class FavouritesFragment : Fragment() {
     }
 
     fun applyTheme() {
-        binding.player.setBackgroundResource(ThemeManager.getBackgroundColorRes())
-        binding.linearLayout3?.setBackgroundResource(ThemeManager.getBottomBarColorRes())
-        binding.MainBtn?.setImageResource(ThemeManager.getMainIconRes())
-        binding.MusicBtn?.setImageResource(ThemeManager.getMusicIconRes())
-        binding.HurtOrangeBtn?.setImageResource(ThemeManager.getHurtOrangeIconRes())
+        binding.FavouritesContainer?.setBackgroundResource(ThemeManager.getBackgroundColorRes())
     }
 
     override fun onDestroyView() {

@@ -49,7 +49,7 @@
             android:layout_width="90dp"
             android:layout_height="60dp"
             android:contentDescription="Избранное"
-            android:src="@drawable/ic_hurt_orange"
+            android:src="@drawable/ic_heart_orange"
             android:background="@android:color/transparent"
             tools:ignore="HardcodedText" />
     </LinearLayout>

@@ -22,22 +22,15 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        applyTheme()
 
         binding.ThemesBtn.setOnClickListener {
             (activity as MainActivity).showThemeSelectionDialog()
         }
-
-        applyTheme()
     }
 
     fun applyTheme() {
-        binding.player.setBackgroundResource(ThemeManager.getBackgroundColorRes())
-        binding.linearLayout3?.setBackgroundResource(ThemeManager.getBottomBarColorRes())
-
-        binding.MainBtn?.setImageResource(ThemeManager.getMainIconRes())
-        binding.MusicBtn?.setImageResource(ThemeManager.getMusicIconRes())
-        binding.HurtOrangeBtn?.setImageResource(ThemeManager.getHurtOrangeIconRes())
-        binding.ThemesBtn?.setImageResource(ThemeManager.getBrushIconRes())
+        binding.MainContainer?.setBackgroundResource(ThemeManager.getBackgroundColorRes())
     }
 
     override fun onDestroyView() {

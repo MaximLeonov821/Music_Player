@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         ThemeManager.loadTheme(this)
+        applyCurrentTheme()
 
         if (savedInstanceState == null) {
             replaceFragment(MainFragment(), "MAIN")
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showThemeSelectionDialog() {
-        val themes = arrayOf("Стандартная", "Темная", "Синяя")
+        val themes = arrayOf("Стандартная", "Темная", "Светлая")
         val currentTheme = ThemeManager.getCurrentTheme()
 
         val builder = AlertDialog.Builder(this)
@@ -87,7 +88,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun applyCurrentTheme() {
-        binding.rootLayout.setBackgroundResource(ThemeManager.getBackgroundColorRes())
         binding.linearLayout3.setBackgroundResource(ThemeManager.getBottomBarColorRes())
 
         updateMainActivityIcons()
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateMainActivityIcons() {
         binding.MainBtn.setImageResource(ThemeManager.getMainIconRes())
         binding.MusicBtn.setImageResource(ThemeManager.getMusicIconRes())
-        binding.HurtOrangeBtn.setImageResource(ThemeManager.getHurtOrangeIconRes())
+        binding.HurtOrangeBtn.setImageResource(ThemeManager.getHeartOrangeIconRes())
     }
 
     private fun selectButton(button: View) {
