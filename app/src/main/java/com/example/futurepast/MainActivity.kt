@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                 when (which) {
                     0 -> ThemeManager.setTheme(ThemeManager.THEME_DEFAULT, this)
                     1 -> ThemeManager.setTheme(ThemeManager.THEME_DARK, this)
-                    2 -> ThemeManager.setTheme(ThemeManager.THEME_BLUE, this)
+                    2 -> ThemeManager.setTheme(ThemeManager.THEME_LIGHT, this)
                 }
                 applyCurrentTheme()
                 dialog.dismiss()
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         return when (theme) {
             ThemeManager.THEME_DEFAULT -> 0
             ThemeManager.THEME_DARK -> 1
-            ThemeManager.THEME_BLUE -> 2
+            ThemeManager.THEME_LIGHT -> 2
             else -> 0
         }
     }

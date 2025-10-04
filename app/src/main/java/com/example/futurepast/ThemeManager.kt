@@ -1,12 +1,11 @@
 package com.example.futurepast
 
 import android.content.Context
-import android.content.SharedPreferences
 
 object ThemeManager {
     const val THEME_DEFAULT = "default"
     const val THEME_DARK = "dark"
-    const val THEME_BLUE = "blue"
+    const val THEME_LIGHT = "light"
 
     private var currentTheme = THEME_DEFAULT
 
@@ -28,7 +27,7 @@ object ThemeManager {
     fun getBackgroundColorRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.color.background_dark
-            THEME_BLUE -> R.color.background_blue
+            THEME_LIGHT -> R.color.BackgroundLight
             else -> R.color.BackgroundRoot
         }
     }
@@ -36,23 +35,15 @@ object ThemeManager {
     fun getBottomBarColorRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.color.background_bottom_dark
-            THEME_BLUE -> R.color.background_bottom_blue
+            THEME_LIGHT -> R.color.BackgroundBottomLight
             else -> R.color.BackgroundBottom
-        }
-    }
-
-    fun getBrushIconRes(): Int {
-        return when (currentTheme) {
-            THEME_DARK -> R.drawable.ic_brush
-            THEME_BLUE -> R.drawable.ic_brush
-            else -> R.drawable.ic_brush
         }
     }
 
     fun getMainIconRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_main
-            THEME_BLUE -> R.drawable.ic_main
+            THEME_LIGHT -> R.drawable.ic_main_light
             else -> R.drawable.ic_main
         }
     }
@@ -60,7 +51,7 @@ object ThemeManager {
     fun getMusicIconRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_music
-            THEME_BLUE -> R.drawable.ic_music
+            THEME_LIGHT -> R.drawable.ic_music_light
             else -> R.drawable.ic_music
         }
     }
@@ -68,7 +59,7 @@ object ThemeManager {
     fun getHurtOrangeIconRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_hurt_orange
-            THEME_BLUE -> R.drawable.ic_hurt_orange
+            THEME_LIGHT -> R.drawable.ic_heart_orange_light
             else -> R.drawable.ic_hurt_orange
         }
     }
@@ -76,7 +67,7 @@ object ThemeManager {
     fun getPlayIconRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_play
-            THEME_BLUE -> R.drawable.ic_play
+            THEME_LIGHT -> R.drawable.ic_play_light
             else -> R.drawable.ic_play
         }
     }
@@ -84,8 +75,57 @@ object ThemeManager {
     fun getPauseIconRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_pause
-            THEME_BLUE -> R.drawable.ic_pause
+            THEME_LIGHT -> R.drawable.ic_pause_light
             else -> R.drawable.ic_pause
+        }
+    }
+
+    fun getRewindBackIconRes(): Int {
+        return when (currentTheme) {
+            THEME_DARK -> R.drawable.ic_rewind_back
+            THEME_LIGHT -> R.drawable.ic_rewind_back_light
+            else -> R.drawable.ic_rewind_back
+        }
+    }
+
+    fun getRewindRightIconRes(): Int {
+        return when (currentTheme) {
+            THEME_DARK -> R.drawable.ic_rewind_right
+            THEME_LIGHT -> R.drawable.ic_rewind_right_light
+            else -> R.drawable.ic_rewind_right
+        }
+    }
+
+    fun getRewindRefreshIconRes(): Int {
+        return when (currentTheme) {
+            THEME_DARK -> R.drawable.ic_refresh
+            THEME_LIGHT -> R.drawable.ic_refresh_light
+            else -> R.drawable.ic_refresh
+        }
+    }
+
+
+    fun getHeartIconRes(): Int {
+        return when (currentTheme) {
+            THEME_DARK -> R.drawable.ic_hurt
+            THEME_LIGHT -> R.drawable.ic_heart_light
+            else -> R.drawable.ic_hurt
+        }
+    }
+
+    fun getRewindRefreshIconRes(): Int {
+        return when (currentTheme) {
+            THEME_DARK -> R.drawable.ic_refresh
+            THEME_LIGHT -> R.drawable.ic_refresh_light
+            else -> R.drawable.ic_refresh
+        }
+    }
+
+    fun getRewindRefreshIconRes(): Int {
+        return when (currentTheme) {
+            THEME_DARK -> R.drawable.ic_cover_background
+            THEME_LIGHT -> R.drawable.ic_cover_background_light
+            else -> R.drawable.ic_cover_background
         }
     }
 }

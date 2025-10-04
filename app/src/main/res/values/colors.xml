@@ -10,6 +10,6 @@
     <color name="background_bottom_dark">#333333</color>
 
 
-    <color name="background_blue">#1E2A3A</color>
-    <color name="background_bottom_blue">#0F1B2D</color>
+    <color name="BackgroundLight">#1E2A3A</color>
+    <color name="BackgroundBottomLight">#0F1B2D</color>
 </resources>
