@@ -20,6 +20,20 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        applyTheme()
+    }
+
+    fun applyTheme() {
+        binding.player.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+        binding.linearLayout3?.setBackgroundResource(ThemeManager.getBottomBarColorRes())
+
+        binding.MainBtn?.setImageResource(ThemeManager.getMainIconRes())
+        binding.MusicBtn?.setImageResource(ThemeManager.getMusicIconRes())
+        binding.HurtOrangeBtn?.setImageResource(ThemeManager.getHurtOrangeIconRes())
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

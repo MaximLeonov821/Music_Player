@@ -1,6 +1,7 @@
 package com.example.futurepast
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
@@ -19,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        ThemeManager.loadTheme(this)
+
         if (savedInstanceState == null) {
             replaceFragment(MainFragment(), "MAIN")
             selectedButton = binding.MainBtn
@@ -29,6 +32,10 @@ class MainActivity : AppCompatActivity() {
 
         scaleUp = AnimationUtils.loadAnimation(this, R.anim.scale_up)
         scaleDown = AnimationUtils.loadAnimation(this, R.anim.scale_down)
+
+        binding.imageButton.setOnClickListener {
+            showThemeSelectionDialog()
+        }
 
         binding.MainBtn.setOnClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
@@ -53,6 +60,7 @@ class MainActivity : AppCompatActivity() {
             }
             selectButton(binding.HurtOrangeBtn)
         }
+
         binding.imageButton.post {
             val buttonWidth = binding.imageButton.width
             val buttonBottom = binding.imageButton.bottom
@@ -61,6 +69,57 @@ class MainActivity : AppCompatActivity() {
 
             binding.imageButton.bringToFront()
         }
+
+        applyCurrentTheme()
+    }
+
+    private fun showThemeSelectionDialog() {
+        val themes = arrayOf("Стандартная", "Темная", "Синяя")
+        val currentTheme = ThemeManager.getCurrentTheme()
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Выберите тему")
+            .setSingleChoiceItems(themes, getThemeIndex(currentTheme)) { dialog, which ->
+                when (which) {
+                    0 -> ThemeManager.setTheme(ThemeManager.THEME_DEFAULT, this)
+                    1 -> ThemeManager.setTheme(ThemeManager.THEME_DARK, this)
+                    2 -> ThemeManager.setTheme(ThemeManager.THEME_BLUE, this)
+                }
+                applyCurrentTheme()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Отмена", null)
+            .show()
+    }
+
+    private fun getThemeIndex(theme: String): Int {
+        return when (theme) {
+            ThemeManager.THEME_DEFAULT -> 0
+            ThemeManager.THEME_DARK -> 1
+            ThemeManager.THEME_BLUE -> 2
+            else -> 0
+        }
+    }
+
+    fun applyCurrentTheme() {
+        binding.rootLayout.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+        binding.linearLayout3.setBackgroundResource(ThemeManager.getBottomBarColorRes())
+
+        updateMainActivityIcons()
+
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        when (currentFragment) {
+            is PlayerFragment -> currentFragment.applyTheme()
+            is MainFragment -> currentFragment.applyTheme()
+            is FavouritesFragment -> currentFragment.applyTheme()
+        }
+    }
+
+    private fun updateMainActivityIcons() {
+        binding.imageButton.setImageResource(ThemeManager.getBrushIconRes())
+        binding.MainBtn.setImageResource(ThemeManager.getMainIconRes())
+        binding.MusicBtn.setImageResource(ThemeManager.getMusicIconRes())
+        binding.HurtOrangeBtn.setImageResource(ThemeManager.getHurtOrangeIconRes())
     }
 
     private fun selectButton(button: View) {
@@ -116,4 +175,5 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 }
+
 data class Quad(val enter: Int, val exit: Int, val popEnter: Int, val popExit: Int)

@@ -25,12 +25,38 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        applyTheme()
+
         binding.PlayPauseSwitcher.setOnClickListener {
             isPlaying = !isPlaying
-            binding.PlayPauseSwitcher.setImageResource(
-                if (isPlaying) R.drawable.ic_play else R.drawable.ic_pause
-            )
+            updatePlayPauseButton()
         }
+    }
+
+    fun applyTheme() {
+        binding.player.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+
+        binding.linearLayout3.setBackgroundResource(ThemeManager.getBottomBarColorRes())
+
+        updateFragmentIcons()
+    }
+
+    private fun updateFragmentIcons() {
+
+        binding.MainBtn?.setImageResource(ThemeManager.getMainIconRes())
+        binding.MusicBtn?.setImageResource(ThemeManager.getMusicIconRes())
+        binding.HurtOrangeBtn?.setImageResource(ThemeManager.getHurtOrangeIconRes())
+
+        updatePlayPauseButton()
+    }
+
+    private fun updatePlayPauseButton() {
+        val iconRes = if (isPlaying) {
+            ThemeManager.getPlayIconRes()
+        } else {
+            ThemeManager.getPauseIconRes()
+        }
+        binding.PlayPauseSwitcher.setImageResource(iconRes)
     }
 
     override fun onDestroyView() {

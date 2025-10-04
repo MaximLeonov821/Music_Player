@@ -5,4 +5,11 @@
     <color name="BackgroundRoot">#89541E</color>
     <color name="BackgroundBottom">#000000</color>
     <color name="BackgroundMusic">#A75233</color>
+
+    <color name="background_dark">#F5F0E6</color>
+    <color name="background_bottom_dark">#333333</color>
+
+
+    <color name="background_blue">#1E2A3A</color>
+    <color name="background_bottom_blue">#0F1B2D</color>
 </resources>
