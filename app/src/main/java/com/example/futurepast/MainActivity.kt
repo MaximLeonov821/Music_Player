@@ -33,10 +33,6 @@ class MainActivity : AppCompatActivity() {
         scaleUp = AnimationUtils.loadAnimation(this, R.anim.scale_up)
         scaleDown = AnimationUtils.loadAnimation(this, R.anim.scale_down)
 
-        binding.imageButton.setOnClickListener {
-            showThemeSelectionDialog()
-        }
-
         binding.MainBtn.setOnClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
             if (currentFragment != null && currentFragment.tag != "MAIN") {
@@ -60,20 +56,9 @@ class MainActivity : AppCompatActivity() {
             }
             selectButton(binding.HurtOrangeBtn)
         }
-
-        binding.imageButton.post {
-            val buttonWidth = binding.imageButton.width
-            val buttonBottom = binding.imageButton.bottom
-
-            binding.fragmentContainer.setPadding(buttonWidth, 100, 0, 0)
-
-            binding.imageButton.bringToFront()
-        }
-
-        applyCurrentTheme()
     }
 
-    private fun showThemeSelectionDialog() {
+    fun showThemeSelectionDialog() {
         val themes = arrayOf("Стандартная", "Темная", "Синяя")
         val currentTheme = ThemeManager.getCurrentTheme()
 
@@ -116,7 +101,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateMainActivityIcons() {
-        binding.imageButton.setImageResource(ThemeManager.getBrushIconRes())
         binding.MainBtn.setImageResource(ThemeManager.getMainIconRes())
         binding.MusicBtn.setImageResource(ThemeManager.getMusicIconRes())
         binding.HurtOrangeBtn.setImageResource(ThemeManager.getHurtOrangeIconRes())

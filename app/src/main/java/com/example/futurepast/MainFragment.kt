@@ -22,6 +22,11 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.ThemesBtn.setOnClickListener {
+            (activity as MainActivity).showThemeSelectionDialog()
+        }
+
         applyTheme()
     }
 
@@ -32,6 +37,7 @@ class MainFragment : Fragment() {
         binding.MainBtn?.setImageResource(ThemeManager.getMainIconRes())
         binding.MusicBtn?.setImageResource(ThemeManager.getMusicIconRes())
         binding.HurtOrangeBtn?.setImageResource(ThemeManager.getHurtOrangeIconRes())
+        binding.ThemesBtn?.setImageResource(ThemeManager.getBrushIconRes())
     }
 
     override fun onDestroyView() {
