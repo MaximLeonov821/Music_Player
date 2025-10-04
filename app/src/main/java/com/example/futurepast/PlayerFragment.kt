@@ -43,7 +43,6 @@ class PlayerFragment : Fragment() {
         updatePlayPauseButton()
     }
 
-
     private fun updatePlayPauseButton() {
         val iconRes = if (isPlaying) {
             ThemeManager.getPlayIconRes()
