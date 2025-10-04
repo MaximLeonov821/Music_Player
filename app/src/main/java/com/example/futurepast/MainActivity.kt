@@ -53,6 +53,14 @@ class MainActivity : AppCompatActivity() {
             }
             selectButton(binding.HurtOrangeBtn)
         }
+        binding.imageButton.post {
+            val buttonWidth = binding.imageButton.width
+            val buttonBottom = binding.imageButton.bottom
+
+            binding.fragmentContainer.setPadding(buttonWidth, 100, 0, 0)
+
+            binding.imageButton.bringToFront()
+        }
     }
 
     private fun selectButton(button: View) {
