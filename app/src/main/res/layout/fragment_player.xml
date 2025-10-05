@@ -49,7 +49,7 @@
                 tools:ignore="HardcodedText" />
 
             <TextView
-                style="@style/TextAppearance.AppCompat.TextViewAuthorStyle"
+                style="@style/TextAppearance.AppCompat.TextViewAuthorStyle.Text1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"

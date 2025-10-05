@@ -37,6 +37,36 @@ object ThemeManager {
         }
     }
 
+    fun getBackgroundMusicBoxColorRes(): Int{
+        return when (currentTheme){
+            THEME_DARK -> R.color.BackgroundMusicDark
+            THEME_LIGHT -> R.color.BackgroundMusicLight
+            else -> R.color.BackgroundMusic
+        }
+    }
+    fun getBackgroundPopUpPanelColorRes(): Int{
+        return when (currentTheme){
+            THEME_DARK -> R.color.BackgroundPopUpPanelDark
+            THEME_LIGHT -> R.color.BackgroundPopUpPanelLight
+            else -> R.color.BackgroundBottom
+        }
+    }
+    fun getBackgroundAlpha(): Float{
+        return when (currentTheme){
+            THEME_DARK -> 1f
+            THEME_LIGHT -> 1f
+            else -> 0.74f
+        }
+    }
+
+    fun getBackgroundLineViewColorRes(): Int{
+        return when(currentTheme){
+            THEME_DARK -> R.color.white
+            THEME_LIGHT -> R.color.BackgroundLineViewLight
+            else -> R.color.white
+        }
+    }
+
     fun getTextsColorRes(): Int{
         return when (currentTheme){
             THEME_DARK -> R.color.TextsDark

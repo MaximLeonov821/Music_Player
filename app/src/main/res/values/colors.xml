@@ -7,11 +7,16 @@
     <color name="BackgroundMusic">#A75233</color>
 
     <color name="BackgroundDark">#1E2A3A</color>
+    <color name="BackgroundPopUpPanelDark">#1E2A3A</color>
     <color name="BackgroundBottomDark">#0F1B2D</color>
+    <color name="BackgroundMusicDark">#829399</color>
     <color name="TextsDark">#E0E0E0</color>
 
 
     <color name="BackgroundLight">#F5F0E6</color>
+    <color name="BackgroundPopUpPanelLight">#F5F0E6</color>
     <color name="BackgroundBottomLight">#333333</color>
+    <color name="BackgroundMusicLight">#6ABEFF</color>
+    <color name="BackgroundLineViewLight">#BCBCBC</color>
     <color name="TextsLight">#333333</color>
 </resources>

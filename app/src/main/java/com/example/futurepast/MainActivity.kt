@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.core.content.ContextCompat
 import com.example.futurepast.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -59,6 +60,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+//    private fun showPopUpMusicPanel(){
+//        binding.PopUpMusicPanel.visibility = View.VISIBLE
+//        binding.LineView.visibility = View.VISIBLE
+//    }
+//
+//    private fun hidePopUpMusicPanel(){
+//        binding.PopUpMusicPanel.visibility = View.GONE
+//        binding.LineView.visibility = View.GONE
+//    }
+
     fun showThemeSelectionDialog() {
         val themes = arrayOf("Стандартная", "Темная", "Светлая")
         val currentTheme = ThemeManager.getCurrentTheme()
@@ -89,6 +100,9 @@ class MainActivity : AppCompatActivity() {
 
     fun applyCurrentTheme() {
         binding.linearLayout3.setBackgroundResource(ThemeManager.getBottomBarColorRes())
+        binding.linearLayout3.alpha = ThemeManager.getBackgroundAlpha()
+        binding.PopUpMusicPanel.setBackgroundResource(ThemeManager.getBackgroundPopUpPanelColorRes())
+        binding.PopUpMusicPanel.alpha = ThemeManager.getBackgroundAlpha()
 
         updateMainActivityIcons()
 
@@ -104,6 +118,13 @@ class MainActivity : AppCompatActivity() {
         binding.MainBtn.setImageResource(ThemeManager.getMainIconRes())
         binding.MusicBtn.setImageResource(ThemeManager.getMusicIconRes())
         binding.HurtOrangeBtn.setImageResource(ThemeManager.getHeartOrangeIconRes())
+        binding.HurtBtn.setImageResource(ThemeManager.getHeartIconRes())
+        binding.RewindRightBtn.setImageResource(ThemeManager.getRewindRightIconRes())
+        binding.LineView.setBackgroundResource(ThemeManager.getBackgroundLineViewColorRes())
+
+        ThemeManager.applyToAllTextViews(binding.root) { textView ->
+            textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))
+        }
     }
 
     private fun selectButton(button: View) {

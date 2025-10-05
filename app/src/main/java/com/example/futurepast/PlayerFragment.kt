@@ -40,9 +40,9 @@ class PlayerFragment : Fragment() {
         binding.RewindRightBtn?.setImageResource(ThemeManager.getRewindRightIconRes())
         binding.HurtBtn?.setImageResource(ThemeManager.getHeartIconRes())
         binding.imageView?.setImageResource(ThemeManager.getCoverBackgroundIconRes())
+
         binding.musicSeekBar.progressDrawable = ContextCompat.getDrawable(binding.root.context,
             ThemeManager.getSeekBarProgressColorRes())
-
         binding.musicSeekBar.thumb = ContextCompat.getDrawable(binding.root.context,
             ThemeManager.getSeekBarThumbColorRes())
 
