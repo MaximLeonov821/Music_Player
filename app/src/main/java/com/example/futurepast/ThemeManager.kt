@@ -77,6 +77,22 @@ object ThemeManager {
         }
     }
 
+    fun getSeekBarProgressColorRes(): Int{
+        return when (currentTheme){
+            THEME_DARK -> R.drawable.music_seekbar_progress_dark
+            THEME_LIGHT -> R.drawable.music_seekbar_progress_light
+            else -> R.drawable.music_seekbar_progress
+        }
+    }
+
+    fun getSeekBarThumbColorRes(): Int{
+        return when (currentTheme){
+            THEME_DARK -> R.drawable.music_seekbar_thumb_dark
+            THEME_LIGHT -> R.drawable.music_seekbar_thumb_light
+            else -> R.drawable.music_seekbar_thumb
+        }
+    }
+
     fun getPlayIconRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_play_dark
