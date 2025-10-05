@@ -34,7 +34,7 @@ class MainFragment : Fragment() {
         binding.MainContainer?.setBackgroundResource(ThemeManager.getBackgroundColorRes())
         binding.ThemesBtn?.setImageResource(ThemeManager.getBrushIconRes())
         binding.MusicBox?.setBackgroundResource(ThemeManager.getBackgroundMusicBoxColorRes())
-        binding.CoverMusicBox?.setImageResource(ThemeManager.getCoverBackgroundIconRes())
+        binding.CoverMusicBox?.setImageResource(ThemeManager.getCoverBackgroundMusicBoxIconRes())
 
         ThemeManager.applyToAllTextViews(binding.root) { textView ->
             textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))

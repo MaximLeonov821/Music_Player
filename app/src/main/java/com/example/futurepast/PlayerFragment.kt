@@ -41,7 +41,17 @@ class PlayerFragment : Fragment() {
         binding.RewindBackBtn?.setImageResource(ThemeManager.getRewindBackIconRes())
         binding.RewindRightBtn?.setImageResource(ThemeManager.getRewindRightIconRes())
         binding.HurtBtn?.setImageResource(ThemeManager.getHeartIconRes())
-        binding.imageView?.setImageResource(ThemeManager.getCoverBackgroundIconRes())
+
+        val coverRes = ThemeManager.getCoverBackgroundPlayerIconRes()
+        if (ThemeManager.isCoverAnimation()) {
+            binding.imageView.setAnimation(coverRes as Int)
+            binding.imageView.playAnimation()
+            binding.imageView.loop(true)
+            binding.imageView.visibility = View.VISIBLE
+        } else {
+            binding.imageView.setImageResource(coverRes as Int)
+            binding.imageView.visibility = View.VISIBLE
+        }
 
         binding.musicSeekBar.progressDrawable = ContextCompat.getDrawable(binding.root.context,
             ThemeManager.getSeekBarProgressColorRes())
