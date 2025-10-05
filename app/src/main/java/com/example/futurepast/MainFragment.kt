@@ -32,6 +32,7 @@ class MainFragment : Fragment() {
 
     fun applyTheme() {
         binding.MainContainer?.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+        binding.ThemesBtn?.setImageResource(ThemeManager.getBrushIconRes())
 
         ThemeManager.applyToAllTextViews(binding.root) { textView ->
             textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))

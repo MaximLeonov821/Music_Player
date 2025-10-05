@@ -45,6 +45,14 @@ object ThemeManager {
         }
     }
 
+    fun getBrushIconRes(): Int{
+        return when (currentTheme){
+            THEME_DARK -> R.drawable.ic_brush_dark
+            THEME_LIGHT -> R.drawable.ic_brush_light
+            else -> R.drawable.ic_brush
+        }
+    }
+
     fun getBottomBarColorRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.color.BackgroundBottomDark
