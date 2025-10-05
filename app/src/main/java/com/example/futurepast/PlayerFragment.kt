@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.example.futurepast.databinding.FragmentPlayerBinding
+import com.airbnb.lottie.LottieAnimationView
 
 class PlayerFragment : Fragment() {
 
@@ -32,6 +33,7 @@ class PlayerFragment : Fragment() {
             updatePlayPauseButton()
         }
     }
+
 
     fun applyTheme() {
         binding.PlayerContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())

@@ -183,7 +183,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_cover_background_dark
             THEME_LIGHT -> R.drawable.ic_cover_background_light
-            else -> R.drawable.ic_cover_background
+            else -> R.raw.cover_animation
         }
     }
 
