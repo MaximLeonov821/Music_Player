@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.example.futurepast.databinding.FragmentFavouritesBinding
 
 class FavouritesFragment : Fragment() {
@@ -27,6 +28,10 @@ class FavouritesFragment : Fragment() {
 
     fun applyTheme() {
         binding.FavouritesContainer?.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+
+        ThemeManager.applyToAllTextViews(binding.root) { textView ->
+            textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))
+        }
     }
 
     override fun onDestroyView() {

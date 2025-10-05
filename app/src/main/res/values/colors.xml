@@ -8,8 +8,10 @@
 
     <color name="BackgroundDark">#1E2A3A</color>
     <color name="BackgroundBottomDark">#0F1B2D</color>
+    <color name="TextsDark">#E0E0E0</color>
 
 
     <color name="BackgroundLight">#F5F0E6</color>
     <color name="BackgroundBottomLight">#333333</color>
+    <color name="TextsLight">#333333</color>
 </resources>

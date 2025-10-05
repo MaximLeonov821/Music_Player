@@ -2,6 +2,9 @@ package com.example.futurepast
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 
 
 object ThemeManager {
@@ -31,6 +34,14 @@ object ThemeManager {
             THEME_DARK -> R.color.BackgroundDark
             THEME_LIGHT -> R.color.BackgroundLight
             else -> R.color.BackgroundRoot
+        }
+    }
+
+    fun getTextsColorRes(): Int{
+        return when (currentTheme){
+            THEME_DARK -> R.color.TextsDark
+            THEME_LIGHT -> R.color.TextsLight
+            else -> R.color.white
         }
     }
 
@@ -122,4 +133,18 @@ object ThemeManager {
         }
     }
 
+     fun applyToAllTextViews(rootView: View, action: (TextView) -> Unit) {
+        if (rootView is ViewGroup) {
+            for (i in 0 until rootView.childCount) {
+                val child = rootView.getChildAt(i)
+                if (child is TextView) {
+                    action(child)
+                } else if (child is ViewGroup) {
+                    applyToAllTextViews(child, action)
+                }
+            }
+        } else if (rootView is TextView) {
+            action(rootView)
+        }
+    }
 }

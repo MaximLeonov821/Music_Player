@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.example.futurepast.databinding.FragmentPlayerBinding
 
 class PlayerFragment : Fragment() {
@@ -39,6 +41,10 @@ class PlayerFragment : Fragment() {
         binding.RewindRightBtn?.setImageResource(ThemeManager.getRewindRightIconRes())
         binding.HurtBtn?.setImageResource(ThemeManager.getHeartIconRes())
         binding.imageView?.setImageResource(ThemeManager.getCoverBackgroundIconRes())
+
+        ThemeManager.applyToAllTextViews(binding.root) { textView ->
+            textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))
+        }
 
         updatePlayPauseButton()
     }
