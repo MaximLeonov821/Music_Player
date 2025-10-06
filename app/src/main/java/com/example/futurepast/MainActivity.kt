@@ -7,11 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import com.example.futurepast.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
+    private val sharedPlayerViewModel: SharedPlayerViewModel by viewModels()
     private var selectedButton: View? = null
     private lateinit var scaleUp: Animation
     private lateinit var scaleDown: Animation
@@ -57,6 +59,10 @@ class MainActivity : AppCompatActivity() {
                 replaceFragment(FavouritesFragment(), "FAVOURITES")
             }
             selectButton(binding.HurtOrangeBtn)
+        }
+
+        binding.PlayPauseSwitcher.setOnClickListener {
+            sharedPlayerViewModel.togglePlayPause()
         }
     }
 
@@ -121,6 +127,9 @@ class MainActivity : AppCompatActivity() {
         binding.HurtBtn.setImageResource(ThemeManager.getHeartIconRes())
         binding.RewindRightBtn.setImageResource(ThemeManager.getRewindRightIconRes())
         binding.LineView.setBackgroundResource(ThemeManager.getBackgroundLineViewColorRes())
+        sharedPlayerViewModel.isPlaying.observe(this) {
+            binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentIconRes())
+        }
 
         ThemeManager.applyToAllTextViews(binding.root) { textView ->
             textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))

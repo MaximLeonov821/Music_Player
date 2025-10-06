@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import com.example.futurepast.databinding.FragmentPlayerBinding
 import com.airbnb.lottie.LottieAnimationView
 
@@ -13,8 +14,7 @@ class PlayerFragment : Fragment() {
 
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
-
-    private var isPlaying = true
+    private val sharedPlayerViewModel: SharedPlayerViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,13 +27,10 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         applyTheme()
-
         binding.PlayPauseSwitcher.setOnClickListener {
-            isPlaying = !isPlaying
-            updatePlayPauseButton()
+            sharedPlayerViewModel.togglePlayPause()
         }
     }
-
 
     fun applyTheme() {
         binding.PlayerContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())
@@ -41,6 +38,9 @@ class PlayerFragment : Fragment() {
         binding.RewindBackBtn?.setImageResource(ThemeManager.getRewindBackIconRes())
         binding.RewindRightBtn?.setImageResource(ThemeManager.getRewindRightIconRes())
         binding.HurtBtn?.setImageResource(ThemeManager.getHeartIconRes())
+        sharedPlayerViewModel.isPlaying.observe(viewLifecycleOwner) {
+            binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentIconRes())
+        }
 
         val coverRes = ThemeManager.getCoverBackgroundPlayerIconRes()
         if (ThemeManager.isCoverAnimation()) {
@@ -62,16 +62,6 @@ class PlayerFragment : Fragment() {
             textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))
         }
 
-        updatePlayPauseButton()
-    }
-
-    private fun updatePlayPauseButton() {
-        val iconRes = if (isPlaying) {
-            ThemeManager.getPlayIconRes()
-        } else {
-            ThemeManager.getPauseIconRes()
-        }
-        binding.PlayPauseSwitcher.setImageResource(iconRes)
     }
 
     override fun onDestroyView() {
