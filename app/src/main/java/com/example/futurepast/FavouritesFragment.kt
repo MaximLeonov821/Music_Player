@@ -28,6 +28,8 @@ class FavouritesFragment : Fragment() {
 
     fun applyTheme() {
         binding.FavouritesContainer?.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+        binding.MusicBox?.setBackgroundResource(ThemeManager.getBackgroundMusicBoxColorRes())
+        binding.CoverMusicBox?.setImageResource(ThemeManager.getCoverBackgroundMusicBoxIconRes())
 
         ThemeManager.applyToAllTextViews(binding.root) { textView ->
             textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))

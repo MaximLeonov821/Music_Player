@@ -62,7 +62,7 @@ object ThemeManager {
     fun getBackgroundLineViewColorRes(): Int{
         return when(currentTheme){
             THEME_DARK -> R.color.white
-            THEME_LIGHT -> R.color.BackgroundLineViewLight
+            THEME_LIGHT -> R.color.BackgroundPanelLineViewLight
             else -> R.color.white
         }
     }

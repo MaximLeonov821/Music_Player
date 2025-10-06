@@ -17,6 +17,6 @@
     <color name="BackgroundPopUpPanelLight">#F5F0E6</color>
     <color name="BackgroundBottomLight">#333333</color>
     <color name="BackgroundMusicLight">#6ABEFF</color>
-    <color name="BackgroundLineViewLight">#BCBCBC</color>
+    <color name="BackgroundPanelLineViewLight">#BCBCBC</color>
     <color name="TextsLight">#333333</color>
 </resources>

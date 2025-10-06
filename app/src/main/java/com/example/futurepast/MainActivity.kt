@@ -69,7 +69,8 @@ class MainActivity : AppCompatActivity() {
     private fun showPopUpMusicPanel(direction: String) {
         if (binding.PopUpMusicPanel.visibility != View.VISIBLE) {
             binding.PopUpMusicPanel.visibility = View.VISIBLE
-            binding.LineView.visibility = View.VISIBLE
+            binding.PanelTopLineView.visibility = View.VISIBLE
+            binding.PanelBottomLineView.visibility = View.VISIBLE
 
             val anim = when(direction) {
                 "left" -> AnimationUtils.loadAnimation(this, R.anim.slide_in_left_panel)
@@ -78,21 +79,24 @@ class MainActivity : AppCompatActivity() {
             }
 
             binding.PopUpMusicPanel.startAnimation(anim)
-            binding.LineView.startAnimation(anim)
+            binding.PanelTopLineView.startAnimation(anim)
+            binding.PanelBottomLineView.startAnimation(anim)
         }
     }
 
     private fun hidePopUpMusicPanel(){
         val slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down)
         binding.PopUpMusicPanel.startAnimation(slideDown)
-        binding.LineView.startAnimation(slideDown)
+        binding.PanelTopLineView.startAnimation(slideDown)
+        binding.PanelBottomLineView.startAnimation(slideDown)
 
         slideDown.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation?) {}
             override fun onAnimationRepeat(animation: Animation?) {}
             override fun onAnimationEnd(animation: Animation?) {
                 binding.PopUpMusicPanel.visibility = View.GONE
-                binding.LineView.visibility = View.GONE
+                binding.PanelTopLineView.visibility = View.GONE
+                binding.PanelBottomLineView.visibility = View.GONE
             }
         })
     }
@@ -148,7 +152,7 @@ class MainActivity : AppCompatActivity() {
         binding.HurtOrangeBtn.setImageResource(ThemeManager.getHeartOrangeIconRes())
         binding.HurtBtn.setImageResource(ThemeManager.getHeartIconRes())
         binding.RewindRightBtn.setImageResource(ThemeManager.getRewindRightIconRes())
-        binding.LineView.setBackgroundResource(ThemeManager.getBackgroundLineViewColorRes())
+        binding.PanelBottomLineView.setBackgroundResource(ThemeManager.getBackgroundLineViewColorRes())
         sharedPlayerViewModel.isPlaying.observe(this) {
             binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentIconRes())
         }
