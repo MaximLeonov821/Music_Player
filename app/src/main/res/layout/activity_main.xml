@@ -10,10 +10,21 @@
     tools:context=".MainActivity"
     >
 
+    <FrameLayout
+        android:id="@+id/ActivityContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+
     <LinearLayout
         android:id="@+id/PopUpMusicPanel"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="90dp"
         android:alpha="0.74"
         android:background="@color/BackgroundBottom"
         android:gravity="center_vertical"
@@ -91,7 +102,7 @@
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="130dp"
         android:alpha="0.74"
         android:background="@color/BackgroundBottom"
         android:orientation="horizontal"

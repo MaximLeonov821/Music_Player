@@ -66,15 +66,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    private fun showPopUpMusicPanel(){
-//        binding.PopUpMusicPanel.visibility = View.VISIBLE
-//        binding.LineView.visibility = View.VISIBLE
-//    }
-//
-//    private fun hidePopUpMusicPanel(){
-//        binding.PopUpMusicPanel.visibility = View.GONE
-//        binding.LineView.visibility = View.GONE
-//    }
+    private fun showPopUpMusicPanel(direction: String) {
+        if (binding.PopUpMusicPanel.visibility != View.VISIBLE) {
+            binding.PopUpMusicPanel.visibility = View.VISIBLE
+            binding.LineView.visibility = View.VISIBLE
+
+            val anim = when(direction) {
+                "left" -> AnimationUtils.loadAnimation(this, R.anim.slide_in_left_panel)
+                "right" -> AnimationUtils.loadAnimation(this, R.anim.slide_in_right_panel)
+                else -> AnimationUtils.loadAnimation(this, R.anim.slide_down)
+            }
+
+            binding.PopUpMusicPanel.startAnimation(anim)
+            binding.LineView.startAnimation(anim)
+        }
+    }
+
+    private fun hidePopUpMusicPanel(){
+        val slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down)
+        binding.PopUpMusicPanel.startAnimation(slideDown)
+        binding.LineView.startAnimation(slideDown)
+
+        slideDown.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationEnd(animation: Animation?) {
+                binding.PopUpMusicPanel.visibility = View.GONE
+                binding.LineView.visibility = View.GONE
+            }
+        })
+    }
 
     fun showThemeSelectionDialog() {
         val themes = arrayOf("Стандартная", "Темная", "Светлая")
@@ -109,6 +130,7 @@ class MainActivity : AppCompatActivity() {
         binding.linearLayout3.alpha = ThemeManager.getBackgroundAlpha()
         binding.PopUpMusicPanel.setBackgroundResource(ThemeManager.getBackgroundPopUpPanelColorRes())
         binding.PopUpMusicPanel.alpha = ThemeManager.getBackgroundAlpha()
+        binding.ActivityContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())
 
         updateMainActivityIcons()
 
@@ -180,6 +202,19 @@ class MainActivity : AppCompatActivity() {
                 Quad(R.anim.slide_in_right, R.anim.slide_out_left,
                     R.anim.slide_in_left, R.anim.slide_out_right)
             }
+        }
+
+        val direction = when {
+            currentFragment == null -> "up"
+            currentFragment.tag == "PLAYER" && tag == "MAIN" -> "right"
+            currentFragment.tag == "PLAYER" && tag == "FAVOURITES" -> "left"
+            else -> "up"
+        }
+
+        if (tag == "MAIN" || tag == "FAVOURITES" ){
+            showPopUpMusicPanel(direction)
+        }else{
+            hidePopUpMusicPanel()
         }
 
         supportFragmentManager.beginTransaction()
