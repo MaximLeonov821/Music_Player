@@ -43,14 +43,19 @@ class PlayerFragment : Fragment() {
         }
 
         val coverRes = ThemeManager.getCoverBackgroundPlayerIconRes()
+
         if (ThemeManager.isCoverAnimation()) {
-            binding.imageView.setAnimation(coverRes as Int)
-            binding.imageView.playAnimation()
-            binding.imageView.loop(true)
-            binding.imageView.visibility = View.VISIBLE
+            binding.lottieView.setAnimation(coverRes)
+            binding.lottieView.playAnimation()
+            binding.lottieView.loop(true)
+
+            binding.lottieView.visibility = View.VISIBLE
+            binding.imageViewStatic.visibility = View.GONE
         } else {
-            binding.imageView.setImageResource(coverRes as Int)
-            binding.imageView.visibility = View.VISIBLE
+            binding.imageViewStatic.setImageResource(coverRes)
+
+            binding.imageViewStatic.visibility = View.VISIBLE
+            binding.lottieView.visibility = View.GONE
         }
 
         binding.musicSeekBar.progressDrawable = ContextCompat.getDrawable(binding.root.context,

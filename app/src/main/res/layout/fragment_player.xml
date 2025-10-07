@@ -17,19 +17,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/imageView"
+        <FrameLayout
+            android:id="@+id/imageFrameLayout"
             android:layout_width="380dp"
             android:layout_height="380dp"
             android:layout_marginTop="20dp"
-            android:contentDescription="Обложка песни"
-            app:lottie_rawRes="@raw/cover_animation"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="HardcodedText" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Анимация -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottieView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="Анимированная обложка"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                tools:ignore="HardcodedText" />
+
+            <!-- Картинка -->
+            <ImageView
+                android:id="@+id/imageViewStatic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Статичная обложка"
+                tools:ignore="HardcodedText" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -40,7 +56,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.75"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView">
+            app:layout_constraintTop_toBottomOf="@+id/imageFrameLayout">
 
             <TextView
                 style="@style/TextAppearance.AppCompat.TextViewMusicStyle.Text1"

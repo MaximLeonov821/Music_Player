@@ -1,7 +1,6 @@
 package com.example.futurepast
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -189,17 +188,20 @@ object ThemeManager {
 
     fun getCoverBackgroundPlayerIconRes(): Int {
         return when (currentTheme) {
-            THEME_DARK -> R.drawable.ic_cover_background_dark
+            THEME_DARK -> R.raw.cover_background_animation_dark
             THEME_LIGHT -> R.drawable.ic_cover_background_light
-            else -> R.raw.cover_animation
+            else -> R.raw.cover_background_animation
         }
     }
+
     fun isCoverAnimation(): Boolean {
         return when (currentTheme) {
-            THEME_DARK, THEME_LIGHT -> false
+            THEME_DARK, THEME_DEFAULT -> true
+            THEME_LIGHT -> false
             else -> true
         }
     }
+
 
      fun applyToAllTextViews(rootView: View, action: (TextView) -> Unit) {
         if (rootView is ViewGroup) {
