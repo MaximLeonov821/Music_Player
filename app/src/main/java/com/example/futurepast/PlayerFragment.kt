@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.futurepast.databinding.FragmentPlayerBinding
 import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieDrawable
 
 class PlayerFragment : Fragment() {
 
@@ -46,14 +47,27 @@ class PlayerFragment : Fragment() {
 
         if (ThemeManager.isCoverAnimation()) {
             binding.lottieView.setAnimation(coverRes)
+
+
+            binding.lottieView.repeatCount = LottieDrawable.INFINITE
+            binding.lottieView.repeatMode = LottieDrawable.RESTART
+            binding.lottieView.setMinAndMaxFrame(1, 89)
+
+
+            binding.lottieView.addAnimatorUpdateListener { animation ->
+                if (animation.animatedFraction > 0.99f) {
+                    binding.lottieView.post {
+                        binding.lottieView.progress = 0f
+                    }
+                }
+            }
+
             binding.lottieView.playAnimation()
-            binding.lottieView.loop(true)
 
             binding.lottieView.visibility = View.VISIBLE
             binding.imageViewStatic.visibility = View.GONE
         } else {
             binding.imageViewStatic.setImageResource(coverRes)
-
             binding.imageViewStatic.visibility = View.VISIBLE
             binding.lottieView.visibility = View.GONE
         }
