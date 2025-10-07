@@ -26,7 +26,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <!-- Анимация -->
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/lottieView"
                 android:layout_width="match_parent"
@@ -36,7 +35,6 @@
                 app:lottie_loop="true"
                 tools:ignore="HardcodedText" />
 
-            <!-- Картинка -->
             <ImageView
                 android:id="@+id/imageViewStatic"
                 android:layout_width="match_parent"
