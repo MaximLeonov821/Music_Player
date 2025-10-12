@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/MusicBox"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@android:color/transparent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/CoverMusicBox"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/ic_cover_background"
+                android:layout_marginStart="10dp"
+                tools:ignore="ContentDescription" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="100dp"
+                android:background="@android:color/transparent">
+
+                <TextView
+                    android:id="@+id/MusicTitle"
+                    style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Музыка"
+                    android:gravity="center_vertical"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/MusicAuthor"
+                    style="@style/TextAppearance.AppCompat.TextViewAuthorStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Автор"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/PlayMusicBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="60dp"
+            android:background="@android:color/transparent" />
+
+        <ImageButton
+            android:id="@+id/TrashDelete"
+            style="@style/SmallImageButton"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/ic_trash"
+            tools:ignore="ContentDescription" />
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/black" />
+
+</LinearLayout>

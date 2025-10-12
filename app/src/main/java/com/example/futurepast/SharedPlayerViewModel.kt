@@ -12,6 +12,8 @@ class SharedPlayerViewModel : ViewModel() {
     val isPlaying: LiveData<Boolean> get() = _isPlaying
     private val _currentMusic = MutableLiveData<MusicData?>()
     val currentMusic: LiveData<MusicData?> get() = _currentMusic
+    private val  _isRewindRightOrClose = MutableLiveData(true)
+    val rewindRightOrClose: LiveData<Boolean> get() = _isRewindRightOrClose
 
     fun playMusic(context: Context, music: MusicData) {
         try {
@@ -25,6 +27,7 @@ class SharedPlayerViewModel : ViewModel() {
             mediaPlayer!!.start()
             _isPlaying.value = true
             _currentMusic.value = music
+            _isRewindRightOrClose.value = true
 
             mediaPlayer!!.setOnCompletionListener {
                 _isPlaying.value = false
@@ -41,6 +44,7 @@ class SharedPlayerViewModel : ViewModel() {
             if (it.isPlaying) {
                 it.pause()
                 _isPlaying.value = false
+                _isRewindRightOrClose.value = false
             }
         }
     }
@@ -50,6 +54,7 @@ class SharedPlayerViewModel : ViewModel() {
             if (!_isPlaying.value!!) {
                 it.start()
                 _isPlaying.value = true
+                _isRewindRightOrClose.value = true
             }
         }
     }
@@ -61,6 +66,7 @@ class SharedPlayerViewModel : ViewModel() {
         }
         mediaPlayer = null
         _isPlaying.value = false
+        _isRewindRightOrClose.value = false
     }
 
     fun togglePlayPause(context: Context) {
@@ -76,7 +82,15 @@ class SharedPlayerViewModel : ViewModel() {
             }
         }
     }
-    fun getCurrentIconRes(): Int {
+    fun getCurrentRewindRightIconRes() : Int {
+        return if (_isRewindRightOrClose.value == false) {
+            ThemeManager.getCloseIconRes()
+
+        } else{
+            ThemeManager.getRewindRightIconRes()
+        }
+    }
+    fun getCurrentPlayPauseIconRes(): Int {
         return if (_isPlaying.value == false) {
             ThemeManager.getPlayIconRes()
         } else {

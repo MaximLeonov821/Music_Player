@@ -36,12 +36,15 @@ class PlayerFragment : Fragment() {
     private fun setupPlayPauseListener() {
         binding.PlayPauseSwitcher.setOnClickListener {
             sharedPlayerViewModel.togglePlayPause(requireContext())
+            if (sharedPlayerViewModel.isPlaying.value == true){
+                (activity as MainActivity).showPopUpMusicPanel()
+            }
         }
     }
 
     private fun observePlaybackState() {
         sharedPlayerViewModel.isPlaying.observe(viewLifecycleOwner) { isPlaying ->
-            binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentIconRes())
+            binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentPlayPauseIconRes())
             controlLottieAnimation(isPlaying)
         }
     }
@@ -86,12 +89,15 @@ class PlayerFragment : Fragment() {
     }
     fun applyTheme() {
         binding.PlayerContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())
-        binding.RefreshBtn?.setImageResource(ThemeManager.getRefreshIconRes())
-        binding.RewindBackBtn?.setImageResource(ThemeManager.getRewindBackIconRes())
-        binding.RewindRightBtn?.setImageResource(ThemeManager.getRewindRightIconRes())
-        binding.HurtBtn?.setImageResource(ThemeManager.getHeartIconRes())
+        binding.RefreshBtn.setImageResource(ThemeManager.getRefreshIconRes())
+        binding.RewindBackBtn.setImageResource(ThemeManager.getRewindBackIconRes())
+        binding.RewindRightBtn.setImageResource(ThemeManager.getRewindRightIconRes())
+        binding.HurtBtn.setImageResource(ThemeManager.getHeartIconRes())
+        binding.TextTitle.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
+        binding.TextAuthor.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
+        binding.totalTime.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
         sharedPlayerViewModel.isPlaying.observe(viewLifecycleOwner) {
-            binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentIconRes())
+            binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentPlayPauseIconRes())
         }
 
         val coverRes = ThemeManager.getCoverBackgroundPlayerIconRes()
@@ -132,11 +138,6 @@ class PlayerFragment : Fragment() {
             ThemeManager.getSeekBarProgressColorRes())
         binding.musicSeekBar.thumb = ContextCompat.getDrawable(binding.root.context,
             ThemeManager.getSeekBarThumbColorRes())
-
-        ThemeManager.applyToAllTextViews(binding.root) { textView ->
-            textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))
-        }
-
     }
 
     override fun onDestroyView() {

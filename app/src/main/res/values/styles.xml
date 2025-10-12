@@ -16,6 +16,10 @@
         <item name="android:textSize">35sp</item>
     </style>
 
+    <style name="TextAppearance.AppCompat.TextViewMusicStyle.Text2">
+        <item name="android:textSize">15sp</item>
+    </style>
+
     <style name="TextAppearance.AppCompat.TextViewAuthorStyle">
         <item name="android:fontFamily">@font/montserratalternates_regular</item>
         <item name="android:textSize">15sp</item>

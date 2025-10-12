@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.futurepast.databinding.FragmentMainBinding
 import kotlinx.coroutines.launch
 import android.Manifest
@@ -21,6 +22,7 @@ class MainFragment : Fragment() {
     private val sharedPlayerViewModel: SharedPlayerViewModel by activityViewModels()
     private lateinit var musicLoader: MusicLoader
     private val musicList = mutableListOf<MusicData>()
+    private lateinit var musicAdapter: MusicAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +36,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         musicLoader = MusicLoader(requireContext())
+        setupRecyclerView()
         ensurePermissionAndLoad()
         applyTheme()
 
@@ -41,17 +44,26 @@ class MainFragment : Fragment() {
             (activity as MainActivity).showThemeSelectionDialog()
         }
 
-        binding.PlayMusicBtn.setOnClickListener {
-            if (musicList.isNotEmpty()) {
-                val current = sharedPlayerViewModel.currentMusic.value ?: musicList[0]
+    }
+
+    private fun setupRecyclerView() {
+        musicAdapter = MusicAdapter(
+            musicList,
+            onItemClick = { music ->
                 if (sharedPlayerViewModel.isPlaying.value == true) {
                     sharedPlayerViewModel.pauseMusic()
                 } else {
-                    sharedPlayerViewModel.playMusic(requireContext(), current)
+                    sharedPlayerViewModel.playMusic(requireContext(), music)
+                    (activity as MainActivity).showPopUpMusicPanel()
                 }
-            }
+            },
+            onTrashClick = { music -> removeSong(music) }
+        )
+        binding.MusicRecyclerView.apply {
+            adapter = musicAdapter
+            layoutManager = LinearLayoutManager(requireContext())
         }
-
+        binding.InstructionMusicText.visibility = View.GONE
     }
     private fun ensurePermissionAndLoad() {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -82,59 +94,53 @@ class MainFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val loadedMusic = musicLoader.loadMusicFromDevice()
+                val oldSize = musicList.size
                 musicList.clear()
                 musicList.addAll(loadedMusic)
 
+                if (oldSize > 0) {
+                    musicAdapter.notifyItemRangeRemoved(0, oldSize)
+                }
                 if (musicList.isNotEmpty()) {
-                    updateMusicBoxWithSong(musicList[0])
+                    musicAdapter.notifyItemRangeInserted(0, musicList.size)
                 } else {
                     showNoMusicMessage()
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
                 showNoMusicMessage()
             }
         }
     }
-    private fun updateMusicBoxWithSong(music: MusicData) {
-        binding.MusicTitle.text = music.title
 
-        if (music.author.equals("Неизвестный автор", ignoreCase = true) || music.author.equals("unknown", ignoreCase = true)) {
-            binding.MusicAuthor.visibility = View.GONE
-        } else {
-            binding.MusicAuthor.visibility = View.VISIBLE
-            binding.MusicAuthor.text = music.author
+    private fun removeSong(music: MusicData) {
+        val position = musicList.indexOf(music)
+        if (position != -1) {
+            musicList.removeAt(position)
+            musicAdapter.notifyItemRemoved(position)
+
+            if (position < musicList.size) {
+                musicAdapter.notifyItemRangeChanged(position, musicList.size - position)
+            }
         }
 
-        binding.TrashDelete.setOnClickListener {
-            removeCurrentSong(music)
-        }
-    }
-
-    private fun removeCurrentSong(music: MusicData) {
-        musicList.remove(music)
-        if (musicList.isNotEmpty()) {
-            updateMusicBoxWithSong(musicList[0])
-        } else {
+        if (musicList.isEmpty()) {
             showNoMusicMessage()
         }
     }
 
     private fun showNoMusicMessage() {
-        binding.MusicTitle.text = "Музыка не скачана"
-        binding.MusicAuthor.visibility = View.GONE
-        binding.TrashDelete.visibility = View.GONE
+        binding.MusicRecyclerView.visibility = View.GONE
+        binding.MusicTopLineView.visibility = View.GONE
+        binding.InstructionMusicText.visibility = View.VISIBLE
     }
 
     fun applyTheme() {
-        binding.MainContainer?.setBackgroundResource(ThemeManager.getBackgroundColorRes())
-        binding.ThemesBtn?.setImageResource(ThemeManager.getBrushIconRes())
-        binding.MusicBox?.setBackgroundResource(ThemeManager.getBackgroundMusicBoxColorRes())
-        binding.CoverMusicBox?.setImageResource(ThemeManager.getCoverBackgroundMusicBoxIconRes())
-
-        ThemeManager.applyToAllTextViews(binding.root) { textView ->
-            textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))
-        }
+        binding.MainContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+        binding.ThemesBtn.setImageResource(ThemeManager.getBrushIconRes())
+        binding.MusicRecyclerView.setBackgroundResource(ThemeManager.getBackgroundMusicBoxColorRes())
+        binding.textViewTitle.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
+        binding.InstructionMusicText.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
+        musicAdapter.updateTheme()
     }
 
     override fun onDestroyView() {

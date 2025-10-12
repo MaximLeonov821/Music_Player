@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        hidePopUpMusicPanel()
         hideNavigationBar()
         ThemeManager.loadTheme(this)
         applyCurrentTheme()
@@ -75,6 +76,14 @@ class MainActivity : AppCompatActivity() {
         binding.PlayPauseSwitcher.setOnClickListener {
             sharedPlayerViewModel.togglePlayPause(this)
         }
+
+        binding.RewindRightBtn.setOnClickListener {
+            if (sharedPlayerViewModel.rewindRightOrClose.value == true){
+                // Тут будет перемотка вперед
+            }else{
+                hidePopUpMusicPanel()
+            }
+        }
     }
 
     private fun onButtonClick(action: () -> Unit) {
@@ -101,39 +110,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showPopUpMusicPanel(direction: String) {
-        if (binding.PopUpMusicPanel.visibility != View.VISIBLE) {
-            binding.PopUpMusicPanel.visibility = View.VISIBLE
-            binding.PanelTopLineView.visibility = View.VISIBLE
-            binding.PanelBottomLineView.visibility = View.VISIBLE
-
-            val anim = when(direction) {
-                "left" -> AnimationUtils.loadAnimation(this, R.anim.slide_in_left_panel)
-                "right" -> AnimationUtils.loadAnimation(this, R.anim.slide_in_right_panel)
-                else -> AnimationUtils.loadAnimation(this, R.anim.slide_down)
-            }
-
-            binding.PopUpMusicPanel.startAnimation(anim)
-            binding.PanelTopLineView.startAnimation(anim)
-            binding.PanelBottomLineView.startAnimation(anim)
-        }
+    fun showPopUpMusicPanel() {
+        binding.PopUpMusicPanel.visibility = View.VISIBLE
+        binding.PanelTopLineView.visibility = View.VISIBLE
+        binding.PanelBottomLineView.visibility = View.VISIBLE
     }
 
-    private fun hidePopUpMusicPanel(){
-        val slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down)
-        binding.PopUpMusicPanel.startAnimation(slideDown)
-        binding.PanelTopLineView.startAnimation(slideDown)
-        binding.PanelBottomLineView.startAnimation(slideDown)
-
-        slideDown.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation?) {}
-            override fun onAnimationRepeat(animation: Animation?) {}
-            override fun onAnimationEnd(animation: Animation?) {
-                binding.PopUpMusicPanel.visibility = View.GONE
-                binding.PanelTopLineView.visibility = View.GONE
-                binding.PanelBottomLineView.visibility = View.GONE
-            }
-        })
+    fun hidePopUpMusicPanel(){
+        binding.PopUpMusicPanel.visibility = View.GONE
+        binding.PanelTopLineView.visibility = View.GONE
+        binding.PanelBottomLineView.visibility = View.GONE
     }
 
     fun showThemeSelectionDialog() {
@@ -186,14 +172,14 @@ class MainActivity : AppCompatActivity() {
         binding.MusicBtn.setImageResource(ThemeManager.getMusicIconRes())
         binding.HurtOrangeBtn.setImageResource(ThemeManager.getHeartOrangeIconRes())
         binding.HurtBtn.setImageResource(ThemeManager.getHeartIconRes())
-        binding.RewindRightBtn.setImageResource(ThemeManager.getRewindRightIconRes())
         binding.PanelBottomLineView.setBackgroundResource(ThemeManager.getBackgroundLineViewColorRes())
-        sharedPlayerViewModel.isPlaying.observe(this) {
-            binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentIconRes())
+        binding.TextTitleMainActivity.setTextColor(ContextCompat.getColor(this, ThemeManager.getTextsColorRes()))
+        binding.TextAuthorMainActivity.setTextColor(ContextCompat.getColor(this, ThemeManager.getTextsColorRes()))
+        sharedPlayerViewModel.rewindRightOrClose.observe(this) {
+            binding.RewindRightBtn.setImageResource(sharedPlayerViewModel.getCurrentRewindRightIconRes())
         }
-
-        ThemeManager.applyToAllTextViews(binding.root) { textView ->
-            textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))
+        sharedPlayerViewModel.isPlaying.observe(this) {
+            binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentPlayPauseIconRes())
         }
     }
 
@@ -246,18 +232,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val direction = when {
-            currentFragment == null -> "up"
-            currentFragment.tag == "PLAYER" && tag == "MAIN" -> "right"
-            currentFragment.tag == "PLAYER" && tag == "FAVOURITES" -> "left"
-            else -> "up"
-        }
+//        val direction = when {
+//            currentFragment == null -> "up"
+//            currentFragment.tag == "PLAYER" && tag == "MAIN" -> "right"
+//            currentFragment.tag == "PLAYER" && tag == "FAVOURITES" -> "left"
+//            else -> "up"
+//        }
 
-        if (tag == "MAIN" || tag == "FAVOURITES" ){
-            showPopUpMusicPanel(direction)
-        }else{
-            hidePopUpMusicPanel()
-        }
+//        if (tag == "MAIN" || tag == "FAVOURITES" ){
+//            showPopUpMusicPanel()
+//        }else{
+//            hidePopUpMusicPanel()
+//        }
 
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)

@@ -56,6 +56,7 @@
             app:layout_constraintTop_toBottomOf="@+id/imageFrameLayout">
 
             <TextView
+                android:id="@+id/TextTitle"
                 style="@style/TextAppearance.AppCompat.TextViewMusicStyle.Text1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,6 +64,7 @@
                 tools:ignore="HardcodedText" />
 
             <TextView
+                android:id="@+id/TextAuthor"
                 style="@style/TextAppearance.AppCompat.TextViewAuthorStyle.Text1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

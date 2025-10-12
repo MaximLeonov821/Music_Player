@@ -170,6 +170,14 @@ object ThemeManager {
         }
     }
 
+    fun getCloseIconRes(): Int {
+        return when (currentTheme) {
+            THEME_DARK -> R.drawable.ic_close_panel
+            THEME_LIGHT -> R.drawable.ic_close_panel
+            else -> R.drawable.ic_close_panel
+        }
+    }
+
     fun getHeartIconRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_heart_dark
