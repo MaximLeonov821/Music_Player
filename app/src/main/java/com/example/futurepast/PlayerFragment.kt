@@ -35,7 +35,7 @@ class PlayerFragment : Fragment() {
 
     private fun setupPlayPauseListener() {
         binding.PlayPauseSwitcher.setOnClickListener {
-            sharedPlayerViewModel.togglePlayPause()
+            sharedPlayerViewModel.togglePlayPause(requireContext())
         }
     }
 

@@ -1,29 +1,91 @@
 package com.example.futurepast
 
+import android.content.Context
+import android.media.MediaPlayer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class SharedPlayerViewModel : ViewModel() {
+    private var mediaPlayer: MediaPlayer? = null
     private val _isPlaying = MutableLiveData(false)
-    private val _currentMusic = MutableLiveData<MusicData?>()
     val isPlaying: LiveData<Boolean> get() = _isPlaying
+    private val _currentMusic = MutableLiveData<MusicData?>()
+    val currentMusic: LiveData<MusicData?> get() = _currentMusic
 
-    fun togglePlayPause() {
-        _isPlaying.value = !(_isPlaying.value ?: false)
-    }
+    fun playMusic(context: Context, music: MusicData) {
+        try {
+            stopMusic()
 
-    fun getCurrentIconRes(): Int {
-        return if (_isPlaying.value == true) {
-            ThemeManager.getPauseIconRes()
-        } else {
-            ThemeManager.getPlayIconRes()
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(music.path)
+                prepare()
+                start()
+
+                setOnCompletionListener {
+                    _isPlaying.value = false
+                }
+            }
+
+            _currentMusic.value = music
+            _isPlaying.value = true
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _isPlaying.value = false
         }
     }
 
-    fun playMusic(music: MusicData) {
-        _currentMusic.value = music
-        _isPlaying.value = true
+    fun pauseMusic() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.pause()
+                _isPlaying.value = false
+            }
+        }
     }
 
+    fun resumeMusic() {
+        mediaPlayer?.let {
+            if (!_isPlaying.value!!) {
+                it.start()
+                _isPlaying.value = true
+            }
+        }
+    }
+
+    fun stopMusic() {
+        mediaPlayer?.let {
+            it.stop()
+            it.release()
+        }
+        mediaPlayer = null
+        _isPlaying.value = false
+    }
+
+    fun togglePlayPause(context: Context) {
+        if (_isPlaying.value == true) {
+            pauseMusic()
+        } else {
+            _currentMusic.value?.let {
+                if (mediaPlayer == null) {
+                    playMusic(context, it)
+                } else {
+                    resumeMusic()
+                }
+            }
+        }
+    }
+    fun getCurrentIconRes(): Int {
+        return if (_isPlaying.value == false) {
+            ThemeManager.getPlayIconRes()
+        } else {
+            ThemeManager.getPauseIconRes()
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        stopMusic()
+    }
 }

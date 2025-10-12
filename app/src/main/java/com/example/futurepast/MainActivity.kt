@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.PlayPauseSwitcher.setOnClickListener {
-            sharedPlayerViewModel.togglePlayPause()
+            sharedPlayerViewModel.togglePlayPause(this)
         }
     }
 

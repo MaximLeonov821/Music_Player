@@ -43,9 +43,15 @@ class MainFragment : Fragment() {
 
         binding.PlayMusicBtn.setOnClickListener {
             if (musicList.isNotEmpty()) {
-                onMusicItemClicked(musicList[0])
+                val current = sharedPlayerViewModel.currentMusic.value ?: musicList[0]
+                if (sharedPlayerViewModel.isPlaying.value == true) {
+                    sharedPlayerViewModel.pauseMusic()
+                } else {
+                    sharedPlayerViewModel.playMusic(requireContext(), current)
+                }
             }
         }
+
     }
     private fun ensurePermissionAndLoad() {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -97,10 +103,6 @@ class MainFragment : Fragment() {
         binding.TrashDelete.setOnClickListener {
             removeCurrentSong(music)
         }
-    }
-
-    private fun onMusicItemClicked(music: MusicData) {
-        sharedPlayerViewModel.playMusic(music)
     }
 
     private fun removeCurrentSong(music: MusicData) {
