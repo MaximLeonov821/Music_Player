@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
     private var selectedButton: View? = null
     private lateinit var scaleUp: Animation
     private lateinit var scaleDown: Animation
+    private var isFragmentChanging = false
+    private var lastClickTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,32 +43,45 @@ class MainActivity : AppCompatActivity() {
         scaleDown = AnimationUtils.loadAnimation(this, R.anim.scale_down)
 
         binding.MainBtn.setOnClickListener {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-            if (currentFragment != null && currentFragment.tag != "MAIN") {
-                replaceFragment(MainFragment(), "MAIN")
+            onButtonClick {
+                val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+                if (currentFragment != null && currentFragment.tag != "MAIN") {
+                    replaceFragment(MainFragment(), "MAIN")
+                }
+                selectButton(binding.MainBtn)
             }
-            selectButton(binding.MainBtn)
         }
 
         binding.MusicBtn.setOnClickListener {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-            if (currentFragment != null && currentFragment.tag != "PLAYER") {
-                replaceFragment(PlayerFragment(), "PLAYER")
+            onButtonClick {
+                val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+                if (currentFragment != null && currentFragment.tag != "PLAYER") {
+                    replaceFragment(PlayerFragment(), "PLAYER")
+                }
+                selectButton(binding.MusicBtn)
             }
-            selectButton(binding.MusicBtn)
         }
 
         binding.HurtOrangeBtn.setOnClickListener {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-            if (currentFragment != null && currentFragment.tag != "FAVOURITES") {
-                replaceFragment(FavouritesFragment(), "FAVOURITES")
+            onButtonClick {
+                val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+                if (currentFragment != null && currentFragment.tag != "FAVOURITES") {
+                    replaceFragment(FavouritesFragment(), "FAVOURITES")
+                }
+                selectButton(binding.HurtOrangeBtn)
             }
-            selectButton(binding.HurtOrangeBtn)
         }
 
         binding.PlayPauseSwitcher.setOnClickListener {
             sharedPlayerViewModel.togglePlayPause(this)
         }
+    }
+
+    private fun onButtonClick(action: () -> Unit) {
+        val now = System.currentTimeMillis()
+        if (now - lastClickTime < 500) return
+        lastClickTime = now
+        action()
     }
 
     private fun hideNavigationBar() {
@@ -193,6 +208,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun replaceFragment(fragment: Fragment, tag: String) {
+        if (isFragmentChanging) return
+        isFragmentChanging = true
+
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
         val (enterAnim, exitAnim, popEnterAnim, popExitAnim) = when {
             currentFragment == null -> {
@@ -246,6 +264,8 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragmentContainer, fragment, tag)
             .addToBackStack(null)
             .commit()
+
+        binding.root.postDelayed({ isFragmentChanging = false }, 300)
     }
 }
 
