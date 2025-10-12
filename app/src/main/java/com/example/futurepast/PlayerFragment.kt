@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.futurepast.databinding.FragmentPlayerBinding
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
+import android.animation.ValueAnimator
 
 class PlayerFragment : Fragment() {
 
@@ -48,11 +49,40 @@ class PlayerFragment : Fragment() {
     private fun controlLottieAnimation(shouldPlay: Boolean) {
         if (ThemeManager.isCoverAnimation()) {
             if (shouldPlay) {
-                binding.lottieView.resumeAnimation()
+                startAnimationWithAcceleration()
             } else {
+                stopAnimationWithDeceleration()
+            }
+        }
+    }
+
+    private fun startAnimationWithAcceleration() {
+        binding.lottieView.speed = 0.1f
+        binding.lottieView.resumeAnimation()
+
+        val animator = ValueAnimator.ofFloat(0.1f, 1.0f)
+        animator.duration = 800
+        animator.addUpdateListener { animation ->
+            val speed = animation.animatedValue as Float
+            binding.lottieView.speed = speed
+        }
+        animator.start()
+    }
+
+    private fun stopAnimationWithDeceleration() {
+        val currentSpeed = binding.lottieView.speed
+
+        val animator = ValueAnimator.ofFloat(currentSpeed, 0f)
+        animator.duration = 800
+        animator.addUpdateListener { animation ->
+            val speed = animation.animatedValue as Float
+            binding.lottieView.speed = speed
+
+            if (speed <= 0.1f) {
                 binding.lottieView.pauseAnimation()
             }
         }
+        animator.start()
     }
     fun applyTheme() {
         binding.PlayerContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())
