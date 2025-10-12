@@ -15,26 +15,26 @@ class SharedPlayerViewModel : ViewModel() {
 
     fun playMusic(context: Context, music: MusicData) {
         try {
-            stopMusic()
-
-            mediaPlayer = MediaPlayer().apply {
-                setDataSource(music.path)
-                prepare()
-                start()
-
-                setOnCompletionListener {
-                    _isPlaying.value = false
-                }
+            if (mediaPlayer == null) {
+                mediaPlayer = MediaPlayer()
             }
 
-            _currentMusic.value = music
+            mediaPlayer!!.reset()
+            mediaPlayer!!.setDataSource(context, music.contentUri)
+            mediaPlayer!!.prepare()
+            mediaPlayer!!.start()
             _isPlaying.value = true
+            _currentMusic.value = music
+
+            mediaPlayer!!.setOnCompletionListener {
+                _isPlaying.value = false
+            }
 
         } catch (e: Exception) {
             e.printStackTrace()
-            _isPlaying.value = false
         }
     }
+
 
     fun pauseMusic() {
         mediaPlayer?.let {
