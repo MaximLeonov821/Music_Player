@@ -98,7 +98,13 @@ class MainFragment : Fragment() {
     }
     private fun updateMusicBoxWithSong(music: MusicData) {
         binding.MusicTitle.text = music.title
-        binding.MusicAuthor.text = music.author
+
+        if (music.author.equals("Неизвестный автор", ignoreCase = true) || music.author.equals("unknown", ignoreCase = true)) {
+            binding.MusicAuthor.visibility = View.GONE
+        } else {
+            binding.MusicAuthor.visibility = View.VISIBLE
+            binding.MusicAuthor.text = music.author
+        }
 
         binding.TrashDelete.setOnClickListener {
             removeCurrentSong(music)
