@@ -42,7 +42,7 @@
 
         <FrameLayout
             android:id="@+id/MusicBox"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="80dp"
             android:orientation="horizontal"
             android:background="@color/BackgroundMusic"
@@ -65,43 +65,48 @@
                     tools:ignore="ContentDescription" />
 
                 <LinearLayout
-                    android:layout_width="250dp"
-                    android:layout_height="80dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:gravity="center_vertical"
-                    android:layout_marginStart="10dp">
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="100dp">
 
                     <TextView
+                        android:id="@+id/MusicTitle"
                         style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:text="Музыка"
                         android:gravity="center_vertical"
                         tools:ignore="HardcodedText" />
 
                     <TextView
+                        android:id="@+id/MusicAuthor"
                         style="@style/TextAppearance.AppCompat.TextViewAuthorStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="30dp"
+                        android:layout_height="wrap_content"
                         android:text="Автор"
                         tools:ignore="HardcodedText" />
                 </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/TrashDelete"
-                    style="@style/SmallImageButton"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/ic_trash"
-                    tools:ignore="ContentDescription" />
 
             </LinearLayout>
 
             <Button
                 android:id="@+id/PlayMusicBtn"
-                android:layout_width="340dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"/>
+                android:layout_marginEnd="60dp"
+                android:background="@android:color/transparent" />
+
+            <ImageButton
+                android:id="@+id/TrashDelete"
+                style="@style/SmallImageButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="end|center_vertical"
+                android:src="@drawable/ic_trash"
+                tools:ignore="ContentDescription" />
 
         </FrameLayout>
 
