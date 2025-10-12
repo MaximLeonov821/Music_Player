@@ -28,11 +28,32 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         applyTheme()
+        setupPlayPauseListener()
+        observePlaybackState()
+    }
+
+    private fun setupPlayPauseListener() {
         binding.PlayPauseSwitcher.setOnClickListener {
             sharedPlayerViewModel.togglePlayPause()
         }
     }
 
+    private fun observePlaybackState() {
+        sharedPlayerViewModel.isPlaying.observe(viewLifecycleOwner) { isPlaying ->
+            binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentIconRes())
+            controlLottieAnimation(isPlaying)
+        }
+    }
+
+    private fun controlLottieAnimation(shouldPlay: Boolean) {
+        if (ThemeManager.isCoverAnimation()) {
+            if (shouldPlay) {
+                binding.lottieView.resumeAnimation()
+            } else {
+                binding.lottieView.pauseAnimation()
+            }
+        }
+    }
     fun applyTheme() {
         binding.PlayerContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())
         binding.RefreshBtn?.setImageResource(ThemeManager.getRefreshIconRes())
@@ -62,7 +83,12 @@ class PlayerFragment : Fragment() {
                 }
             }
 
-            binding.lottieView.playAnimation()
+            val isPlaying = sharedPlayerViewModel.isPlaying.value ?: true
+            if (isPlaying) {
+                binding.lottieView.playAnimation()
+            } else {
+                binding.lottieView.pauseAnimation()
+            }
 
             binding.lottieView.visibility = View.VISIBLE
             binding.imageViewStatic.visibility = View.GONE
