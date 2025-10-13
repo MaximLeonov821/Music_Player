@@ -19,9 +19,9 @@
 
         <FrameLayout
             android:id="@+id/imageFrameLayout"
-            android:layout_width="380dp"
-            android:layout_height="350dp"
-            android:layout_marginTop="20dp"
+            android:layout_width="350dp"
+            android:layout_height="320dp"
+            android:layout_marginTop="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -39,7 +39,7 @@
                 android:id="@+id/imageViewStatic"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
+                android:layout_marginHorizontal="20dp"
                 android:contentDescription="Статичная обложка"
                 tools:ignore="HardcodedText" />
 
@@ -50,6 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="37dp"
+            android:layout_marginTop="10dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
