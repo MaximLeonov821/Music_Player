@@ -172,8 +172,8 @@ object ThemeManager {
 
     fun getCloseIconRes(): Int {
         return when (currentTheme) {
-            THEME_DARK -> R.drawable.ic_close_panel
-            THEME_LIGHT -> R.drawable.ic_close_panel
+            THEME_DARK -> R.drawable.ic_close_panel_dark
+            THEME_LIGHT -> R.drawable.ic_close_panel_light
             else -> R.drawable.ic_close_panel
         }
     }
