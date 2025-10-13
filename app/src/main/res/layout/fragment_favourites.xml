@@ -60,7 +60,7 @@
                     android:id="@+id/CoverMusicBox"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
-                    android:src="@drawable/ic_cover_background"
+                    android:src="@drawable/ic_cover_background_small"
                     android:layout_marginStart="10dp"
                     tools:ignore="ContentDescription" />
 

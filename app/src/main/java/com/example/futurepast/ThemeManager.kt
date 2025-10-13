@@ -188,16 +188,16 @@ object ThemeManager {
 
     fun getCoverBackgroundMusicBoxIconRes(): Int {
         return when (currentTheme) {
-            THEME_DARK -> R.drawable.ic_cover_background_dark
-            THEME_LIGHT -> R.drawable.ic_cover_background_light
-            else -> R.drawable.ic_cover_background
+            THEME_DARK -> R.drawable.ic_cover_background_small_dark
+            THEME_LIGHT -> R.drawable.ic_cover_background_small_light
+            else -> R.drawable.ic_cover_background_small
         }
     }
 
     fun getCoverBackgroundPlayerIconRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.raw.cover_background_animation_dark
-            THEME_LIGHT -> R.drawable.ic_cover_background_light
+            THEME_LIGHT -> R.drawable.ic_cover_background_large_light
             else -> R.raw.cover_background_animation
         }
     }
