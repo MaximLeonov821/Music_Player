@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private var selectedButton: View? = null
     private lateinit var scaleUp: Animation
     private lateinit var scaleDown: Animation
+    private var isFragmentChanging = false
     private var lastClickTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -212,7 +213,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchFragment(target: Fragment, tag: String) {
-        if (target == activeFragment) return
+        if (target == activeFragment || isFragmentChanging) return
+        isFragmentChanging = true
 
         val (enterAnim, exitAnim, popEnterAnim, popExitAnim) = when {
             activeFragment?.tag == "PLAYER" && tag == "FAVOURITES" -> {
@@ -252,6 +254,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
 
         activeFragment = target
+        binding.root.postDelayed({ isFragmentChanging = false }, 300)
     }
 }
 
