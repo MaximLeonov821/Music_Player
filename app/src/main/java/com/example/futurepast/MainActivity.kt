@@ -16,10 +16,13 @@ import com.example.futurepast.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private val sharedPlayerViewModel: SharedPlayerViewModel by viewModels()
+    private lateinit var mainFragment: MainFragment
+    private lateinit var playerFragment: PlayerFragment
+    private lateinit var favouritesFragment: FavouritesFragment
+    private var activeFragment: Fragment? = null
     private var selectedButton: View? = null
     private lateinit var scaleUp: Animation
     private lateinit var scaleDown: Animation
-    private var isFragmentChanging = false
     private var lastClickTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,11 +36,16 @@ class MainActivity : AppCompatActivity() {
         applyCurrentTheme()
 
         if (savedInstanceState == null) {
-            replaceFragment(MainFragment(), "MAIN")
-            selectedButton = binding.MainBtn
-            binding.MainBtn.startAnimation(
-                AnimationUtils.loadAnimation(this, R.anim.scale_up)
-            )
+            initFragments()
+        } else {
+            mainFragment = supportFragmentManager.findFragmentByTag("MAIN") as MainFragment
+            playerFragment = supportFragmentManager.findFragmentByTag("PLAYER") as PlayerFragment
+            favouritesFragment = supportFragmentManager.findFragmentByTag("FAVOURITES") as FavouritesFragment
+            activeFragment = when {
+                mainFragment.isVisible -> mainFragment
+                playerFragment.isVisible -> playerFragment
+                else -> favouritesFragment
+            }
         }
 
         scaleUp = AnimationUtils.loadAnimation(this, R.anim.scale_up)
@@ -45,9 +53,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.MainBtn.setOnClickListener {
             onButtonClick {
-                val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-                if (currentFragment != null && currentFragment.tag != "MAIN") {
-                    replaceFragment(MainFragment(), "MAIN")
+                if (activeFragment != mainFragment) {
+                    switchFragment(mainFragment, "MAIN")
                 }
                 selectButton(binding.MainBtn)
             }
@@ -55,9 +62,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.MusicBtn.setOnClickListener {
             onButtonClick {
-                val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-                if (currentFragment != null && currentFragment.tag != "PLAYER") {
-                    replaceFragment(PlayerFragment(), "PLAYER")
+                if (activeFragment != playerFragment) {
+                    switchFragment(playerFragment, "PLAYER")
                 }
                 selectButton(binding.MusicBtn)
             }
@@ -65,9 +71,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.HurtOrangeBtn.setOnClickListener {
             onButtonClick {
-                val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-                if (currentFragment != null && currentFragment.tag != "FAVOURITES") {
-                    replaceFragment(FavouritesFragment(), "FAVOURITES")
+                if (activeFragment != favouritesFragment) {
+                    switchFragment(favouritesFragment, "FAVOURITES")
                 }
                 selectButton(binding.HurtOrangeBtn)
             }
@@ -159,12 +164,9 @@ class MainActivity : AppCompatActivity() {
 
         updateMainActivityIcons()
 
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-        when (currentFragment) {
-            is PlayerFragment -> currentFragment.applyTheme()
-            is MainFragment -> currentFragment.applyTheme()
-            is FavouritesFragment -> currentFragment.applyTheme()
-        }
+        if (::mainFragment.isInitialized) mainFragment.applyTheme()
+        if (::playerFragment.isInitialized) playerFragment.applyTheme()
+        if (::favouritesFragment.isInitialized) favouritesFragment.applyTheme()
     }
 
     private fun updateMainActivityIcons() {
@@ -193,36 +195,47 @@ class MainActivity : AppCompatActivity() {
         selectedButton = button
     }
 
-    fun replaceFragment(fragment: Fragment, tag: String) {
-        if (isFragmentChanging) return
-        isFragmentChanging = true
+    private fun initFragments() {
+        mainFragment = MainFragment()
+        playerFragment = PlayerFragment()
+        favouritesFragment = FavouritesFragment()
 
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragmentContainer, mainFragment, "MAIN")
+            .add(R.id.fragmentContainer, playerFragment, "PLAYER").hide(playerFragment)
+            .add(R.id.fragmentContainer, favouritesFragment, "FAVOURITES").hide(favouritesFragment)
+            .commit()
+
+        activeFragment = mainFragment
+        selectedButton = binding.MainBtn
+        binding.MainBtn.startAnimation(AnimationUtils.loadAnimation(this, R.anim.scale_up))
+    }
+
+    private fun switchFragment(target: Fragment, tag: String) {
+        if (target == activeFragment) return
+
         val (enterAnim, exitAnim, popEnterAnim, popExitAnim) = when {
-            currentFragment == null -> {
-                Quad(0, 0, 0, 0)
-            }
-            currentFragment.tag == "PLAYER" && tag == "FAVOURITES" -> {
+            activeFragment?.tag == "PLAYER" && tag == "FAVOURITES" -> {
                 Quad(R.anim.slide_in_right, R.anim.slide_out_left,
                     R.anim.slide_in_left, R.anim.slide_out_right)
             }
-            currentFragment.tag == "FAVOURITES" && tag == "PLAYER" -> {
+            activeFragment?.tag == "FAVOURITES" && tag == "PLAYER" -> {
                 Quad(R.anim.slide_in_left, R.anim.slide_out_right,
                     R.anim.slide_in_right, R.anim.slide_out_left)
             }
-            currentFragment.tag == "MAIN" && tag == "PLAYER" -> {
+            activeFragment?.tag == "MAIN" && tag == "PLAYER" -> {
                 Quad(R.anim.slide_in_right, R.anim.slide_out_left,
                     R.anim.slide_in_left, R.anim.slide_out_right)
             }
-            currentFragment.tag == "PLAYER" && tag == "MAIN" -> {
+            activeFragment?.tag == "PLAYER" && tag == "MAIN" -> {
                 Quad(R.anim.slide_in_left, R.anim.slide_out_right,
                     R.anim.slide_in_right, R.anim.slide_out_left)
             }
-            currentFragment.tag == "MAIN" && tag == "FAVOURITES" -> {
+            activeFragment?.tag == "MAIN" && tag == "FAVOURITES" -> {
                 Quad(R.anim.slide_in_right, R.anim.slide_out_left,
                     R.anim.slide_in_left, R.anim.slide_out_right)
             }
-            currentFragment.tag == "FAVOURITES" && tag == "MAIN" -> {
+            activeFragment?.tag == "FAVOURITES" && tag == "MAIN" -> {
                 Quad(R.anim.slide_in_left, R.anim.slide_out_right,
                     R.anim.slide_in_right, R.anim.slide_out_left)
             }
@@ -232,26 +245,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-//        val direction = when {
-//            currentFragment == null -> "up"
-//            currentFragment.tag == "PLAYER" && tag == "MAIN" -> "right"
-//            currentFragment.tag == "PLAYER" && tag == "FAVOURITES" -> "left"
-//            else -> "up"
-//        }
-
-//        if (tag == "MAIN" || tag == "FAVOURITES" ){
-//            showPopUpMusicPanel()
-//        }else{
-//            hidePopUpMusicPanel()
-//        }
-
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
-            .replace(R.id.fragmentContainer, fragment, tag)
-            .addToBackStack(null)
+            .hide(activeFragment!!)
+            .show(target)
             .commit()
 
-        binding.root.postDelayed({ isFragmentChanging = false }, 300)
+        activeFragment = target
     }
 }
 
