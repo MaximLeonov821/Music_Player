@@ -117,9 +117,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showPopUpMusicPanel() {
-        binding.PopUpMusicPanel.visibility = View.VISIBLE
-        binding.PanelTopLineView.visibility = View.VISIBLE
-        binding.PanelBottomLineView.visibility = View.VISIBLE
+        sharedPlayerViewModel.currentMusic.observe(this){music ->
+            if (music != null){
+                binding.PopUpMusicPanel.visibility = View.VISIBLE
+                binding.TextTitleMainActivity.text = music.title
+                binding.TextAuthorMainActivity.text = music.author
+                binding.PanelTopLineView.visibility = View.VISIBLE
+                binding.PanelBottomLineView.visibility = View.VISIBLE
+            }
+        }
     }
 
     fun hidePopUpMusicPanel(){

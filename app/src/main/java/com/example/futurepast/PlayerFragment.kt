@@ -11,6 +11,7 @@ import com.example.futurepast.databinding.FragmentPlayerBinding
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import android.animation.ValueAnimator
+import androidx.lifecycle.LifecycleOwner
 
 class PlayerFragment : Fragment() {
 
@@ -31,7 +32,18 @@ class PlayerFragment : Fragment() {
         applyTheme()
         setupPlayPauseListener()
         observePlaybackState()
+        musicPlayerPanel()
     }
+
+    private fun musicPlayerPanel(){
+        sharedPlayerViewModel.currentMusic.observe(viewLifecycleOwner){music ->
+            if (music != null){
+                binding.TextTitle.text = music.title
+                binding.TextAuthor.text = music.author
+            }
+        }
+    }
+
 
     private fun setupPlayPauseListener() {
         binding.PlayPauseSwitcher.setOnClickListener {
