@@ -49,7 +49,7 @@
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="37dp"
+            android:layout_marginHorizontal="30dp"
             android:layout_marginTop="10dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -88,7 +88,7 @@
                     android:max="100"
                     android:layout_weight="1"
                     android:paddingStart="0dp"
-                    android:progress="30"
+                    android:progress="0"
                     android:progressDrawable="@drawable/music_seekbar_progress"
                     android:splitTrack="false"
                     android:thumb="@drawable/music_seekbar_thumb"
@@ -98,7 +98,7 @@
                 <TextView
                     android:id="@+id/totalTime"
                     style="@style/TextAppearance.AppCompat.TextViewAuthorStyle.Text1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="45dp"
                     android:layout_height="wrap_content"
                     android:text="0:00"
                     tools:ignore="HardcodedText" />

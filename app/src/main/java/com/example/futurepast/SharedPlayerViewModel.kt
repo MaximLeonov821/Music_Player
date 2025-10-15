@@ -31,6 +31,7 @@ class SharedPlayerViewModel : ViewModel() {
 
             mediaPlayer!!.setOnCompletionListener {
                 _isPlaying.value = false
+                _isRewindRightOrClose.value = false
             }
 
         } catch (e: Exception) {
@@ -102,4 +103,17 @@ class SharedPlayerViewModel : ViewModel() {
         super.onCleared()
         stopMusic()
     }
+
+    fun getDuration(): Int {
+        return mediaPlayer?.duration ?: 0
+    }
+
+    fun getPlayerInstance(): MediaPlayer? {
+        return mediaPlayer
+    }
+
+    fun seekTo(positionMs: Int) {
+        mediaPlayer?.seekTo(positionMs)
+    }
+
 }

@@ -8,16 +8,22 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.futurepast.databinding.FragmentPlayerBinding
-import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import android.animation.ValueAnimator
-import androidx.lifecycle.LifecycleOwner
+import android.widget.SeekBar
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class PlayerFragment : Fragment() {
 
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
     private val sharedPlayerViewModel: SharedPlayerViewModel by activityViewModels()
+    private var seekBarUpdateJob: Job? = null
+    private var isUserSeeking = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +39,7 @@ class PlayerFragment : Fragment() {
         setupPlayPauseListener()
         observePlaybackState()
         musicPlayerPanel()
+        setupSeekBar()
     }
 
     private fun musicPlayerPanel(){
@@ -99,6 +106,81 @@ class PlayerFragment : Fragment() {
         }
         animator.start()
     }
+
+    private fun setupSeekBar() {
+        binding.musicSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    val duration = sharedPlayerViewModel.getDuration()
+                    if (duration > 0) {
+                        updateSeekBarProgress(progress * duration / 100)
+                    }
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                isUserSeeking = true
+                seekBarUpdateJob?.cancel()
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                if (seekBar != null) {
+                    val duration = sharedPlayerViewModel.getDuration()
+                    if (duration > 0) {
+                        val newPos = seekBar.progress * duration / 100
+                        sharedPlayerViewModel.seekTo(newPos)
+                        updateSeekBarProgress(newPos)
+                    }
+                }
+                isUserSeeking = false
+                startUpdatingSeekBar()
+            }
+        })
+
+        sharedPlayerViewModel.currentMusic.observe(viewLifecycleOwner) { music ->
+            if (music != null) {
+                updateSeekBarProgress(0)
+                startUpdatingSeekBar()
+            } else {
+                stopUpdatingSeekBar()
+            }
+        }
+    }
+
+    private fun startUpdatingSeekBar() {
+        seekBarUpdateJob?.cancel()
+        seekBarUpdateJob = lifecycleScope.launch {
+            while (isActive) {
+                if (!isUserSeeking) {
+                    val player = sharedPlayerViewModel.getPlayerInstance()
+                    if (player != null && player.duration > 0) {
+                        updateSeekBarProgress(player.currentPosition)
+                    }
+                }
+                delay(300)
+            }
+        }
+    }
+
+    private fun stopUpdatingSeekBar() {
+        seekBarUpdateJob?.cancel()
+        seekBarUpdateJob = null
+    }
+
+    private fun updateSeekBarProgress(position: Int) {
+        val duration = sharedPlayerViewModel.getDuration()
+        if (duration <= 0) return
+        binding.musicSeekBar.progress = position * 100 / duration
+        binding.totalTime.text = formatTime(position)
+    }
+
+    private fun formatTime(milliseconds: Int): String {
+        val totalSeconds = milliseconds / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        return String.format("%d:%02d", minutes, seconds)
+    }
+
     fun applyTheme() {
         binding.PlayerContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())
         binding.RefreshBtn.setImageResource(ThemeManager.getRefreshIconRes())
@@ -154,6 +236,7 @@ class PlayerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        stopUpdatingSeekBar()
         _binding = null
     }
 }
