@@ -40,6 +40,10 @@ class PlayerFragment : Fragment() {
         observePlaybackState()
         musicPlayerPanel()
         setupSeekBar()
+
+        binding.RewindRightBtn.setOnClickListener {
+            sharedPlayerViewModel.nextMusic(requireContext())
+        }
     }
 
     private fun musicPlayerPanel(){

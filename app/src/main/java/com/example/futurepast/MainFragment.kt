@@ -98,6 +98,8 @@ class MainFragment : Fragment() {
                 musicList.clear()
                 musicList.addAll(loadedMusic)
 
+                sharedPlayerViewModel.setMusicList(musicList.toList())
+
                 if (oldSize > 0) {
                     musicAdapter.notifyItemRangeRemoved(0, oldSize)
                 }
@@ -117,6 +119,7 @@ class MainFragment : Fragment() {
         if (position != -1) {
             musicList.removeAt(position)
             musicAdapter.notifyItemRemoved(position)
+            sharedPlayerViewModel.setMusicList(musicList.toList())
 
             if (position < musicList.size) {
                 musicAdapter.notifyItemRangeChanged(position, musicList.size - position)

@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.RewindRightBtn.setOnClickListener {
             if (sharedPlayerViewModel.rewindRightOrClose.value == true){
-                // Тут будет перемотка вперед
+                sharedPlayerViewModel.nextMusic(this)
             }else{
                 hidePopUpMusicPanel()
             }

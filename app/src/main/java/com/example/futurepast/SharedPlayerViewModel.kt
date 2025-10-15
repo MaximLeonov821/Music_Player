@@ -12,8 +12,14 @@ class SharedPlayerViewModel : ViewModel() {
     val isPlaying: LiveData<Boolean> get() = _isPlaying
     private val _currentMusic = MutableLiveData<MusicData?>()
     val currentMusic: LiveData<MusicData?> get() = _currentMusic
+    private val _musicList = MutableLiveData<List<MusicData>>(emptyList())
+    val musicList: LiveData<List<MusicData>> get() = _musicList
     private val  _isRewindRightOrClose = MutableLiveData(true)
     val rewindRightOrClose: LiveData<Boolean> get() = _isRewindRightOrClose
+
+    fun setMusicList(list: List<MusicData>) {
+        _musicList.value = list
+    }
 
     fun playMusic(context: Context, music: MusicData) {
         try {
@@ -68,6 +74,20 @@ class SharedPlayerViewModel : ViewModel() {
         mediaPlayer = null
         _isPlaying.value = false
         _isRewindRightOrClose.value = false
+    }
+
+    fun nextMusic(context: Context) {
+        val currentMusic = _currentMusic.value
+        val list = _musicList.value ?: emptyList()
+
+        if (currentMusic != null && list.isNotEmpty()) {
+            val currentIndex = list.indexOfFirst { it.id == currentMusic.id }
+            if (currentIndex != -1) {
+                val nextIndex = (currentIndex + 1) % list.size
+                val nextMusic = list[nextIndex]
+                playMusic(context, nextMusic)
+            }
+        }
     }
 
     fun togglePlayPause(context: Context) {
