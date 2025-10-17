@@ -38,6 +38,7 @@ class SharedPlayerViewModel : ViewModel() {
             mediaPlayer!!.setOnCompletionListener {
                 _isPlaying.value = false
                 _isRewindRightOrClose.value = false
+                nextMusic(context)
             }
 
         } catch (e: Exception) {
@@ -86,6 +87,24 @@ class SharedPlayerViewModel : ViewModel() {
                 val nextIndex = (currentIndex + 1) % list.size
                 val nextMusic = list[nextIndex]
                 playMusic(context, nextMusic)
+            }
+        }
+    }
+
+    fun backMusic(context: Context) {
+        val currentMusic = _currentMusic.value
+        val list = _musicList.value ?: emptyList()
+
+        if (currentMusic != null && list.isNotEmpty()) {
+            val currentIndex = list.indexOfFirst { it.id == currentMusic.id }
+            if (currentIndex != -1) {
+                val backIndex = if (currentIndex == 0) {
+                    list.size - 1
+                } else {
+                    currentIndex - 1
+                }
+                val backMusic = list[backIndex]
+                playMusic(context, backMusic)
             }
         }
     }

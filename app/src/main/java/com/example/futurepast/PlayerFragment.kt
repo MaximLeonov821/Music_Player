@@ -44,6 +44,10 @@ class PlayerFragment : Fragment() {
         binding.RewindRightBtn.setOnClickListener {
             sharedPlayerViewModel.nextMusic(requireContext())
         }
+
+        binding.RewindBackBtn.setOnClickListener {
+            sharedPlayerViewModel.backMusic(requireContext())
+        }
     }
 
     private fun musicPlayerPanel(){
