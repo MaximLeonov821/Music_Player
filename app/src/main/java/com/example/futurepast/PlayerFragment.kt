@@ -40,6 +40,7 @@ class PlayerFragment : Fragment() {
         observePlaybackState()
         musicPlayerPanel()
         setupSeekBar()
+        observeRefreshState()
 
         binding.RewindRightBtn.setOnClickListener {
             sharedPlayerViewModel.nextMusic(requireContext())
@@ -47,6 +48,10 @@ class PlayerFragment : Fragment() {
 
         binding.RewindBackBtn.setOnClickListener {
             sharedPlayerViewModel.backMusic(requireContext())
+        }
+
+        binding.RefreshBtn.setOnClickListener {
+            sharedPlayerViewModel.toggleShuffle()
         }
     }
 
@@ -59,6 +64,12 @@ class PlayerFragment : Fragment() {
         }
     }
 
+    private fun observeRefreshState() {
+        sharedPlayerViewModel.isShuffled.observe(viewLifecycleOwner){ifOn ->
+            if (ifOn) binding.RefreshBtn.animate().rotationBy(360f).setDuration(300).start()
+            else binding.RefreshBtn.animate().rotationBy(-360f).setDuration(300).start()
+        }
+    }
 
     private fun setupPlayPauseListener() {
         binding.PlayPauseSwitcher.setOnClickListener {

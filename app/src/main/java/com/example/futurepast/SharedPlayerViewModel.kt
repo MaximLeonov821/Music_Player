@@ -2,6 +2,7 @@ package com.example.futurepast
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.text.BoringLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,9 +17,13 @@ class SharedPlayerViewModel : ViewModel() {
     val musicList: LiveData<List<MusicData>> get() = _musicList
     private val  _isRewindRightOrClose = MutableLiveData(true)
     val rewindRightOrClose: LiveData<Boolean> get() = _isRewindRightOrClose
+    private val _isShuffled = MutableLiveData(false)
+    val isShuffled: LiveData<Boolean> get() = _isShuffled
+    private var playOrder: MutableList<Int> = mutableListOf()
 
     fun setMusicList(list: List<MusicData>) {
         _musicList.value = list
+        playOrder = list.indices.toMutableList()
     }
 
     fun playMusic(context: Context, music: MusicData) {
@@ -77,16 +82,30 @@ class SharedPlayerViewModel : ViewModel() {
         _isRewindRightOrClose.value = false
     }
 
+    fun toggleShuffle() {
+        val list = _musicList.value ?: return
+        val newState = !(_isShuffled.value ?: false)
+        _isShuffled.value = newState
+
+        if (newState) {
+            playOrder.shuffle()
+        } else {
+            playOrder = list.indices.toMutableList()
+        }
+    }
+
+
     fun nextMusic(context: Context) {
         val currentMusic = _currentMusic.value
         val list = _musicList.value ?: emptyList()
 
-        if (currentMusic != null && list.isNotEmpty()) {
+        if (currentMusic != null && list.isNotEmpty() && playOrder.isNotEmpty()) {
             val currentIndex = list.indexOfFirst { it.id == currentMusic.id }
-            if (currentIndex != -1) {
-                val nextIndex = (currentIndex + 1) % list.size
-                val nextMusic = list[nextIndex]
-                playMusic(context, nextMusic)
+            val logicalIndex = playOrder.indexOf(currentIndex)
+            if (logicalIndex != -1) {
+                val nextIndex = (logicalIndex + 1) % playOrder.size
+                val nextMusic = playOrder[nextIndex]
+                playMusic(context, list[nextMusic])
             }
         }
     }
@@ -95,16 +114,13 @@ class SharedPlayerViewModel : ViewModel() {
         val currentMusic = _currentMusic.value
         val list = _musicList.value ?: emptyList()
 
-        if (currentMusic != null && list.isNotEmpty()) {
+        if (currentMusic != null && list.isNotEmpty() && playOrder.isNotEmpty()) {
             val currentIndex = list.indexOfFirst { it.id == currentMusic.id }
-            if (currentIndex != -1) {
-                val backIndex = if (currentIndex == 0) {
-                    list.size - 1
-                } else {
-                    currentIndex - 1
-                }
-                val backMusic = list[backIndex]
-                playMusic(context, backMusic)
+            val logicalIndex = playOrder.indexOf(currentIndex)
+            if (logicalIndex != -1) {
+                val prevLogical = if (logicalIndex == 0) playOrder.size - 1 else logicalIndex - 1
+                val prevIndex = playOrder[prevLogical]
+                playMusic(context, list[prevIndex])
             }
         }
     }
