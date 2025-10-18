@@ -53,6 +53,13 @@ class PlayerFragment : Fragment() {
         binding.RefreshBtn.setOnClickListener {
             sharedPlayerViewModel.toggleShuffle()
         }
+
+        binding.HurtBtn.setOnClickListener {
+            val currentMusic = sharedPlayerViewModel.currentMusic.value
+            if (currentMusic != null) {
+                sharedPlayerViewModel.addToFavourites(requireContext(), currentMusic)
+            }
+        }
     }
 
     private fun musicPlayerPanel(){

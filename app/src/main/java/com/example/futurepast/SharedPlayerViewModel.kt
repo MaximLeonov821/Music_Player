@@ -2,7 +2,6 @@ package com.example.futurepast
 
 import android.content.Context
 import android.media.MediaPlayer
-import android.text.BoringLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,6 +19,8 @@ class SharedPlayerViewModel : ViewModel() {
     private val _isShuffled = MutableLiveData(false)
     val isShuffled: LiveData<Boolean> get() = _isShuffled
     private var playOrder: MutableList<Int> = mutableListOf()
+    private val _favouritesList = MutableLiveData<List<MusicData>>(emptyList())
+    val favouritesList: LiveData<List<MusicData>> get() = _favouritesList
 
     fun setMusicList(list: List<MusicData>) {
         _musicList.value = list
@@ -123,6 +124,38 @@ class SharedPlayerViewModel : ViewModel() {
                 playMusic(context, list[prevIndex])
             }
         }
+    }
+
+    fun addToFavourites(context: Context, music: MusicData) {
+        val current = _favouritesList.value?.toMutableList() ?: mutableListOf()
+        if (!current.any { it.id == music.id }) {
+            current.add(music)
+            _favouritesList.value = current
+            saveFavouritesToPrefs(context)
+        }
+    }
+
+    fun removeFromFavourites(context: Context, music: MusicData) {
+        val current = _favouritesList.value?.toMutableList() ?: mutableListOf()
+        current.removeAll { it.id == music.id }
+        _favouritesList.value = current
+        saveFavouritesToPrefs(context)
+    }
+
+    private fun saveFavouritesToPrefs(context: Context) {
+        val prefs = context.getSharedPreferences("favourites", Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+        val ids = _favouritesList.value?.map { it.id }?.joinToString(",") ?: ""
+        editor.putString("favourites_ids", ids)
+        editor.apply()
+    }
+
+    fun loadFavouritesFromPrefs(context: Context) {
+        val prefs = context.getSharedPreferences("favourites", Context.MODE_PRIVATE)
+        val savedIds = prefs.getString("favourites_ids", "")?.split(",")?.mapNotNull { it.toLongOrNull() } ?: emptyList()
+        val music = _musicList.value ?: emptyList()
+        val favourites = music.filter { savedIds.contains(it.id) }
+        _favouritesList.value = favourites
     }
 
     fun togglePlayPause(context: Context) {

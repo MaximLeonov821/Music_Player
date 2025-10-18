@@ -90,6 +90,13 @@ class MainActivity : AppCompatActivity() {
                 hidePopUpMusicPanel()
             }
         }
+
+        binding.HurtBtn.setOnClickListener {
+            val currentMusic = sharedPlayerViewModel.currentMusic.value
+            if (currentMusic != null){
+                sharedPlayerViewModel.addToFavourites( this, currentMusic)
+            }
+        }
     }
 
     private fun onButtonClick(action: () -> Unit) {
