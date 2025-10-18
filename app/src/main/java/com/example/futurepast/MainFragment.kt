@@ -23,6 +23,14 @@ class MainFragment : Fragment() {
     private lateinit var musicLoader: MusicLoader
     private val musicList = mutableListOf<MusicData>()
     private lateinit var musicAdapter: MusicAdapter
+    private val deleteSongsLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            loadMusicFromDevice()
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -115,6 +123,32 @@ class MainFragment : Fragment() {
     }
 
     private fun removeSong(music: MusicData) {
+        val uri = music.contentUri
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                val pendingIntent = android.provider.MediaStore.createDeleteRequest(
+                    requireContext().contentResolver,
+                    listOf(uri)
+                )
+                deleteSongsLauncher.launch(
+                    androidx.activity.result.IntentSenderRequest.Builder(pendingIntent.intentSender).build()
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            try {
+                requireContext().contentResolver.delete(uri, null, null)
+                removeFromList(music)
+            } catch (e: SecurityException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun removeFromList(music: MusicData) {
+
         val position = musicList.indexOf(music)
         if (position != -1) {
             musicList.removeAt(position)
