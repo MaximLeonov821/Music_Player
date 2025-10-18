@@ -61,7 +61,7 @@ class MainFragment : Fragment() {
                 if (sharedPlayerViewModel.isPlaying.value == true) {
                     sharedPlayerViewModel.pauseMusic()
                 } else {
-                    sharedPlayerViewModel.playMusic(requireContext(), music)
+                    sharedPlayerViewModel.playMusic(requireContext(), music, false)
                     (activity as MainActivity).showPopUpMusicPanel()
                 }
             },
@@ -153,7 +153,7 @@ class MainFragment : Fragment() {
         if (position != -1) {
             musicList.removeAt(position)
             musicAdapter.notifyItemRemoved(position)
-            sharedPlayerViewModel.setMusicList(musicList.toList())
+            sharedPlayerViewModel.removeFromMusicListAndUpdate(requireContext(), music)
 
             if (position < musicList.size) {
                 musicAdapter.notifyItemRangeChanged(position, musicList.size - position)

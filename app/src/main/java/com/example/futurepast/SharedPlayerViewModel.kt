@@ -21,17 +21,22 @@ class SharedPlayerViewModel : ViewModel() {
     private var playOrder: MutableList<Int> = mutableListOf()
     private val _favouritesList = MutableLiveData<List<MusicData>>(emptyList())
     val favouritesList: LiveData<List<MusicData>> get() = _favouritesList
+    private var isPlayingFromFavourites = false
+    private val _isFavouritesShuffled = MutableLiveData(false)
+    val isFavouritesShuffled: LiveData<Boolean> get() = _isFavouritesShuffled
+    private var favouritesPlayOrder: MutableList<Int> = mutableListOf()
+    private var currentIndexInOrder = 0
 
     fun setMusicList(list: List<MusicData>) {
         _musicList.value = list
         playOrder = list.indices.toMutableList()
+        currentIndexInOrder = 0
     }
 
-    fun playMusic(context: Context, music: MusicData) {
+    fun playMusic(context: Context, music: MusicData, fromFavourites: Boolean = false) {
+        isPlayingFromFavourites = fromFavourites
         try {
-            if (mediaPlayer == null) {
-                mediaPlayer = MediaPlayer()
-            }
+            if (mediaPlayer == null) mediaPlayer = MediaPlayer()
 
             mediaPlayer!!.reset()
             mediaPlayer!!.setDataSource(context, music.contentUri)
@@ -47,11 +52,17 @@ class SharedPlayerViewModel : ViewModel() {
                 nextMusic(context)
             }
 
+            val list = if (fromFavourites) _favouritesList.value ?: emptyList()
+            else _musicList.value ?: emptyList()
+            val order = if (fromFavourites) favouritesPlayOrder else playOrder
+
+            currentIndexInOrder = order.indexOfFirst { list[it].id == music.id }
+            if (currentIndexInOrder == -1) currentIndexInOrder = 0
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
-
 
     fun pauseMusic() {
         mediaPlayer?.let {
@@ -84,46 +95,72 @@ class SharedPlayerViewModel : ViewModel() {
     }
 
     fun toggleShuffle() {
-        val list = _musicList.value ?: return
-        val newState = !(_isShuffled.value ?: false)
-        _isShuffled.value = newState
+        val list = if (isPlayingFromFavourites) _favouritesList.value ?: return
+        else _musicList.value ?: return
 
-        if (newState) {
-            playOrder.shuffle()
-        } else {
-            playOrder = list.indices.toMutableList()
-        }
+        val newState = !(if (isPlayingFromFavourites) _isFavouritesShuffled.value ?: false
+        else _isShuffled.value ?: false)
+
+        if (isPlayingFromFavourites) _isFavouritesShuffled.value = newState
+        else _isShuffled.value = newState
+
+        val order = list.indices.toMutableList()
+        if (newState) order.shuffle()
+
+        if (isPlayingFromFavourites) favouritesPlayOrder = order
+        else playOrder = order
+
+        val currentId = _currentMusic.value?.id
+        currentIndexInOrder = order.indexOfFirst { list[it].id == currentId }
+        if (currentIndexInOrder == -1) currentIndexInOrder = 0
     }
 
-
     fun nextMusic(context: Context) {
-        val currentMusic = _currentMusic.value
-        val list = _musicList.value ?: emptyList()
-
-        if (currentMusic != null && list.isNotEmpty() && playOrder.isNotEmpty()) {
-            val currentIndex = list.indexOfFirst { it.id == currentMusic.id }
-            val logicalIndex = playOrder.indexOf(currentIndex)
-            if (logicalIndex != -1) {
-                val nextIndex = (logicalIndex + 1) % playOrder.size
-                val nextMusic = playOrder[nextIndex]
-                playMusic(context, list[nextMusic])
-            }
-        }
+        if (isPlayingFromFavourites) nextFavouritesMusic(context)
+        else nextMusicInList(context)
     }
 
     fun backMusic(context: Context) {
-        val currentMusic = _currentMusic.value
-        val list = _musicList.value ?: emptyList()
+        if (isPlayingFromFavourites) backFavouritesMusic(context)
+        else backMusicInList(context)
+    }
 
-        if (currentMusic != null && list.isNotEmpty() && playOrder.isNotEmpty()) {
-            val currentIndex = list.indexOfFirst { it.id == currentMusic.id }
-            val logicalIndex = playOrder.indexOf(currentIndex)
-            if (logicalIndex != -1) {
-                val prevLogical = if (logicalIndex == 0) playOrder.size - 1 else logicalIndex - 1
-                val prevIndex = playOrder[prevLogical]
-                playMusic(context, list[prevIndex])
-            }
-        }
+    private fun nextMusicInList(context: Context) {
+        val list = _musicList.value ?: return
+        if (list.isEmpty() || playOrder.isEmpty()) return
+
+        currentIndexInOrder = (currentIndexInOrder + 1) % playOrder.size
+        val nextTrack = list[playOrder[currentIndexInOrder]]
+        playMusic(context, nextTrack, false)
+    }
+
+    private fun backMusicInList(context: Context) {
+        val list = _musicList.value ?: return
+        if (list.isEmpty() || playOrder.isEmpty()) return
+
+        currentIndexInOrder =
+            if (currentIndexInOrder <= 0) playOrder.size - 1 else currentIndexInOrder - 1
+        val prevTrack = list[playOrder[currentIndexInOrder]]
+        playMusic(context, prevTrack, false)
+    }
+
+    private fun nextFavouritesMusic(context: Context) {
+        val list = _favouritesList.value ?: return
+        if (list.isEmpty() || favouritesPlayOrder.isEmpty()) return
+
+        currentIndexInOrder = (currentIndexInOrder + 1) % favouritesPlayOrder.size
+        val nextTrack = list[favouritesPlayOrder[currentIndexInOrder]]
+        playMusic(context, nextTrack, true)
+    }
+
+    private fun backFavouritesMusic(context: Context) {
+        val list = _favouritesList.value ?: return
+        if (list.isEmpty() || favouritesPlayOrder.isEmpty()) return
+
+        currentIndexInOrder =
+            if (currentIndexInOrder <= 0) favouritesPlayOrder.size - 1 else currentIndexInOrder - 1
+        val prevTrack = list[favouritesPlayOrder[currentIndexInOrder]]
+        playMusic(context, prevTrack, true)
     }
 
     fun addToFavourites(context: Context, music: MusicData) {
@@ -140,6 +177,34 @@ class SharedPlayerViewModel : ViewModel() {
         current.removeAll { it.id == music.id }
         _favouritesList.value = current
         saveFavouritesToPrefs(context)
+        favouritesPlayOrder = current.indices.toMutableList()
+
+        if (_currentMusic.value?.id == music.id) {
+            stopMusic()
+            _currentMusic.value = null
+        }
+    }
+
+    fun removeFromMusicListAndUpdate(context: Context, music: MusicData) {
+        val current = _musicList.value?.toMutableList() ?: mutableListOf()
+        current.removeAll { it.id == music.id }
+        _musicList.value = current
+
+        if (_isShuffled.value == true) playOrder =
+            current.indices.toMutableList().also { it.shuffle() }
+        else playOrder = current.indices.toMutableList()
+
+        if (_currentMusic.value?.id == music.id) {
+            stopMusic()
+            _currentMusic.value = null
+        }
+
+        val favourites = _favouritesList.value?.toMutableList() ?: mutableListOf()
+        if (favourites.any { it.id == music.id }) {
+            favourites.removeAll { it.id == music.id }
+            _favouritesList.value = favourites
+            saveFavouritesToPrefs(context)
+        }
     }
 
     private fun saveFavouritesToPrefs(context: Context) {
@@ -152,10 +217,15 @@ class SharedPlayerViewModel : ViewModel() {
 
     fun loadFavouritesFromPrefs(context: Context) {
         val prefs = context.getSharedPreferences("favourites", Context.MODE_PRIVATE)
-        val savedIds = prefs.getString("favourites_ids", "")?.split(",")?.mapNotNull { it.toLongOrNull() } ?: emptyList()
+        val savedIds =
+            prefs.getString("favourites_ids", "")?.split(",")?.mapNotNull { it.toLongOrNull() }
+                ?: emptyList()
         val music = _musicList.value ?: emptyList()
         val favourites = music.filter { savedIds.contains(it.id) }
         _favouritesList.value = favourites
+
+        favouritesPlayOrder = favourites.indices.toMutableList()
+        if (_isFavouritesShuffled.value == true) favouritesPlayOrder.shuffle()
     }
 
     fun togglePlayPause(context: Context) {

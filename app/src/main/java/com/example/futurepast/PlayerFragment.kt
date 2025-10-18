@@ -72,9 +72,16 @@ class PlayerFragment : Fragment() {
     }
 
     private fun observeRefreshState() {
-        sharedPlayerViewModel.isShuffled.observe(viewLifecycleOwner){ifOn ->
-            if (ifOn) binding.RefreshBtn.animate().rotationBy(360f).setDuration(300).start()
-            else binding.RefreshBtn.animate().rotationBy(-360f).setDuration(300).start()
+        sharedPlayerViewModel.isShuffled.observe(viewLifecycleOwner) {updateShuffleRotation(it)}
+        sharedPlayerViewModel.isFavouritesShuffled.observe(viewLifecycleOwner) {updateShuffleRotation(it)}
+
+    }
+
+    private fun updateShuffleRotation(isOn: Boolean) {
+        if (isOn) {
+            binding.RefreshBtn.animate().rotationBy(360f).setDuration(300).start()
+        } else {
+            binding.RefreshBtn.animate().rotationBy(-360f).setDuration(300).start()
         }
     }
 

@@ -49,7 +49,7 @@ class FavouritesFragment : Fragment() {
                 if (sharedPlayerViewModel.isPlaying.value == true) {
                     sharedPlayerViewModel.pauseMusic()
                 }else {
-                    sharedPlayerViewModel.playMusic(requireContext(), music)
+                    sharedPlayerViewModel.playMusic(requireContext(), music, true)
                     (activity as MainActivity).showPopUpMusicPanel()
                 }
             },
