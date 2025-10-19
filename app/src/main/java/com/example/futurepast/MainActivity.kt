@@ -168,7 +168,9 @@ class MainActivity : AppCompatActivity() {
             ThemeManager.THEME_DEFAULT -> 0
             ThemeManager.THEME_DARK -> 1
             ThemeManager.THEME_LIGHT -> 2
-            ThemeManager.THEME_BROWN_AND_PINK -> 3
+            ThemeManager.THEME_BLACK_AND_GREEN -> 3
+            ThemeManager.THEME_BROWN_AND_PINK -> 4
+            ThemeManager.THEME_DARK_INDIGO -> 5
             else -> 0
         }
     }
