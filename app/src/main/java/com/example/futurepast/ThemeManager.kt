@@ -249,6 +249,17 @@ object ThemeManager {
         }
     }
 
+    fun getHeartRedIconRes(): Int{
+        return when (currentTheme) {
+            THEME_DARK -> R.drawable.ic_heart_red
+            THEME_LIGHT -> R.drawable.ic_heart_red
+            THEME_BLACK_AND_GREEN -> R.drawable.ic_heart_red
+            THEME_BROWN_AND_PINK -> R.drawable.ic_heart_red
+            THEME_DARK_INDIGO -> R.drawable.ic_heart_red
+            else -> R.drawable.ic_heart_red
+        }
+    }
+
     fun getCoverBackgroundMusicBoxIconRes(): Int {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_cover_background_small_dark

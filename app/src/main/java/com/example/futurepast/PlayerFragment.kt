@@ -223,6 +223,9 @@ class PlayerFragment : Fragment() {
         binding.TextTitle.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
         binding.TextAuthor.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
         binding.totalTime.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
+        sharedPlayerViewModel.isFavouritesAdd.observe(viewLifecycleOwner) {
+            binding.HurtBtn.setImageResource(sharedPlayerViewModel.getCurrentHeartIconRes())
+        }
         sharedPlayerViewModel.isPlaying.observe(viewLifecycleOwner) {
             binding.PlayPauseSwitcher.setImageResource(sharedPlayerViewModel.getCurrentPlayPauseIconRes())
         }

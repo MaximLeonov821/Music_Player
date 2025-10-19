@@ -193,10 +193,12 @@ class MainActivity : AppCompatActivity() {
         binding.MainBtn.setImageResource(ThemeManager.getMainIconRes())
         binding.MusicBtn.setImageResource(ThemeManager.getMusicIconRes())
         binding.HurtOrangeBtn.setImageResource(ThemeManager.getHeartOrangeIconRes())
-        binding.HurtBtn.setImageResource(ThemeManager.getHeartIconRes())
         binding.PanelBottomLineView.setBackgroundResource(ThemeManager.getBackgroundLineViewColorRes())
         binding.TextTitleMainActivity.setTextColor(ContextCompat.getColor(this, ThemeManager.getTextsColorRes()))
         binding.TextAuthorMainActivity.setTextColor(ContextCompat.getColor(this, ThemeManager.getTextsColorRes()))
+        sharedPlayerViewModel.isFavouritesAdd.observe(this) {
+            binding.HurtBtn.setImageResource(sharedPlayerViewModel.getCurrentHeartIconRes())
+        }
         sharedPlayerViewModel.rewindRightOrClose.observe(this) {
             binding.RewindRightBtn.setImageResource(sharedPlayerViewModel.getCurrentRewindRightIconRes())
         }

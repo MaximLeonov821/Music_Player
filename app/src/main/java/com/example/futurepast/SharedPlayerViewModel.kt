@@ -21,6 +21,9 @@ class SharedPlayerViewModel : ViewModel() {
     private var playOrder: MutableList<Int> = mutableListOf()
     private val _favouritesList = MutableLiveData<List<MusicData>>(emptyList())
     val favouritesList: LiveData<List<MusicData>> get() = _favouritesList
+
+    private val _isFavouritesAdd = MutableLiveData(false)
+    val isFavouritesAdd: LiveData<Boolean> get() = _isFavouritesAdd
     private var isPlayingFromFavourites = false
     private val _isFavouritesShuffled = MutableLiveData(false)
     val isFavouritesShuffled: LiveData<Boolean> get() = _isFavouritesShuffled
@@ -45,6 +48,8 @@ class SharedPlayerViewModel : ViewModel() {
             _isPlaying.value = true
             _currentMusic.value = music
             _isRewindRightOrClose.value = true
+            val isInFavourites = _favouritesList.value?.any { it.id == music.id } ?: false
+            _isFavouritesAdd.value = isInFavourites
 
             mediaPlayer!!.setOnCompletionListener {
                 _isPlaying.value = false
@@ -163,6 +168,7 @@ class SharedPlayerViewModel : ViewModel() {
         if (!current.any { it.id == music.id }) {
             current.add(music)
             _favouritesList.value = current
+            _isFavouritesAdd.value = true
             saveFavouritesToPrefs(context)
         }
     }
@@ -171,6 +177,7 @@ class SharedPlayerViewModel : ViewModel() {
         val current = _favouritesList.value?.toMutableList() ?: mutableListOf()
         current.removeAll { it.id == music.id }
         _favouritesList.value = current
+        _isFavouritesAdd.value = false
         saveFavouritesToPrefs(context)
         favouritesPlayOrder = current.indices.toMutableList()
         if (_isFavouritesShuffled.value == true) favouritesPlayOrder.shuffle()
@@ -222,6 +229,19 @@ class SharedPlayerViewModel : ViewModel() {
 
         favouritesPlayOrder = favourites.indices.toMutableList()
         if (_isFavouritesShuffled.value == true) favouritesPlayOrder.shuffle()
+
+        _currentMusic.value?.let { currentMusic ->
+            val isInFavourites = favourites.any { it.id == currentMusic.id }
+            _isFavouritesAdd.value = isInFavourites
+        }
+    }
+
+    fun getCurrentHeartIconRes(): Int {
+        return if (_isFavouritesAdd.value == true) {
+            ThemeManager.getHeartRedIconRes()
+        } else {
+            ThemeManager.getHeartIconRes()
+        }
     }
 
     fun togglePlayPause(context: Context) {
