@@ -94,25 +94,20 @@ class SharedPlayerViewModel : ViewModel() {
         _isRewindRightOrClose.value = false
     }
 
-    fun toggleShuffle() {
-        val list = if (isPlayingFromFavourites) _favouritesList.value ?: return
-        else _musicList.value ?: return
+    fun toggleShuffleForAll() {
+        val newState = !(_isShuffled.value ?: false)
+        _isShuffled.value = newState
+        _isFavouritesShuffled.value = newState
 
-        val newState = !(if (isPlayingFromFavourites) _isFavouritesShuffled.value ?: false
-        else _isShuffled.value ?: false)
+        playOrder = (_musicList.value?.indices?.toMutableList() ?: mutableListOf()).apply { if (newState) shuffle() }
+        favouritesPlayOrder = (_favouritesList.value?.indices?.toMutableList() ?: mutableListOf()).apply { if (newState) shuffle() }
 
-        if (isPlayingFromFavourites) _isFavouritesShuffled.value = newState
-        else _isShuffled.value = newState
-
-        val order = list.indices.toMutableList()
-        if (newState) order.shuffle()
-
-        if (isPlayingFromFavourites) favouritesPlayOrder = order
-        else playOrder = order
-
-        val currentId = _currentMusic.value?.id
-        currentIndexInOrder = order.indexOfFirst { list[it].id == currentId }
-        if (currentIndexInOrder == -1) currentIndexInOrder = 0
+        val currentList = if (isPlayingFromFavourites) favouritesPlayOrder else playOrder
+        val currentMusicId = _currentMusic.value?.id
+        currentIndexInOrder = currentList.indexOfFirst { idx ->
+            val list = if (isPlayingFromFavourites) _favouritesList.value else _musicList.value
+            list?.get(idx)?.id == currentMusicId
+        }.takeIf { it != -1 } ?: 0
     }
 
     fun nextMusic(context: Context) {
@@ -178,6 +173,7 @@ class SharedPlayerViewModel : ViewModel() {
         _favouritesList.value = current
         saveFavouritesToPrefs(context)
         favouritesPlayOrder = current.indices.toMutableList()
+        if (_isFavouritesShuffled.value == true) favouritesPlayOrder.shuffle()
 
         if (_currentMusic.value?.id == music.id) {
             stopMusic()

@@ -51,7 +51,7 @@ class PlayerFragment : Fragment() {
         }
 
         binding.RefreshBtn.setOnClickListener {
-            sharedPlayerViewModel.toggleShuffle()
+            sharedPlayerViewModel.toggleShuffleForAll()
         }
 
         binding.HurtBtn.setOnClickListener {
