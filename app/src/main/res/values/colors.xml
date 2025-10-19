@@ -19,4 +19,11 @@
     <color name="BackgroundMusicLight">#6ABEFF</color>
     <color name="BackgroundPanelLineViewLight">#BCBCBC</color>
     <color name="TextsLight">#333333</color>
+
+
+
+    <color name="BackgroundBrownAndPink">#2A1E17</color>
+    <color name="BackgroundPopUpPanelAndBottomBrownAndPink">#4A3C31</color>
+    <color name="BackgroundMusicBrownAndPink">#BA7BA1</color>
+    <color name="TextsBrownAndPink">#F5F0E6</color>
 </resources>

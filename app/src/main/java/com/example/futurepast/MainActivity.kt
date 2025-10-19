@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showThemeSelectionDialog() {
-        val themes = arrayOf("Стандартная", "Темная", "Светлая")
+        val themes = arrayOf("Стандартная", "Темная", "Светлая", "Коричнево-розовая")
         val currentTheme = ThemeManager.getCurrentTheme()
 
         val builder = AlertDialog.Builder(this)
@@ -152,6 +152,7 @@ class MainActivity : AppCompatActivity() {
                     0 -> ThemeManager.setTheme(ThemeManager.THEME_DEFAULT, this)
                     1 -> ThemeManager.setTheme(ThemeManager.THEME_DARK, this)
                     2 -> ThemeManager.setTheme(ThemeManager.THEME_LIGHT, this)
+                    3 -> ThemeManager.setTheme(ThemeManager.THEME_BROWN_AND_PINK, this)
                 }
                 applyCurrentTheme()
                 dialog.dismiss()
@@ -165,6 +166,7 @@ class MainActivity : AppCompatActivity() {
             ThemeManager.THEME_DEFAULT -> 0
             ThemeManager.THEME_DARK -> 1
             ThemeManager.THEME_LIGHT -> 2
+            ThemeManager.THEME_BROWN_AND_PINK -> 3
             else -> 0
         }
     }

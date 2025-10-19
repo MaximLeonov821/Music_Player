@@ -10,6 +10,7 @@ object ThemeManager {
     const val THEME_DEFAULT = "default"
     const val THEME_DARK = "dark"
     const val THEME_LIGHT = "light"
+    const val THEME_BROWN_AND_PINK = "brownAndPink"
 
     private var currentTheme = THEME_DEFAULT
 
@@ -32,6 +33,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.color.BackgroundDark
             THEME_LIGHT -> R.color.BackgroundLight
+            THEME_BROWN_AND_PINK -> R.color.BackgroundBrownAndPink
             else -> R.color.BackgroundRoot
         }
     }
@@ -40,6 +42,7 @@ object ThemeManager {
         return when (currentTheme){
             THEME_DARK -> R.color.BackgroundMusicDark
             THEME_LIGHT -> R.color.BackgroundMusicLight
+            THEME_BROWN_AND_PINK -> R.color.BackgroundMusicBrownAndPink
             else -> R.color.BackgroundMusic
         }
     }
@@ -47,6 +50,7 @@ object ThemeManager {
         return when (currentTheme){
             THEME_DARK -> R.color.BackgroundPopUpPanelDark
             THEME_LIGHT -> R.color.BackgroundPopUpPanelLight
+            THEME_BROWN_AND_PINK -> R.color.BackgroundPopUpPanelAndBottomBrownAndPink
             else -> R.color.BackgroundBottom
         }
     }
@@ -54,6 +58,7 @@ object ThemeManager {
         return when (currentTheme){
             THEME_DARK -> 1f
             THEME_LIGHT -> 1f
+            THEME_BROWN_AND_PINK -> 1f
             else -> 0.74f
         }
     }
@@ -62,6 +67,7 @@ object ThemeManager {
         return when(currentTheme){
             THEME_DARK -> R.color.white
             THEME_LIGHT -> R.color.BackgroundPanelLineViewLight
+            THEME_BROWN_AND_PINK -> R.color.white
             else -> R.color.white
         }
     }
@@ -70,6 +76,7 @@ object ThemeManager {
         return when (currentTheme){
             THEME_DARK -> R.color.TextsDark
             THEME_LIGHT -> R.color.TextsLight
+            THEME_BROWN_AND_PINK -> R.color.TextsBrownAndPink
             else -> R.color.white
         }
     }
@@ -78,6 +85,7 @@ object ThemeManager {
         return when (currentTheme){
             THEME_DARK -> R.drawable.ic_brush_dark
             THEME_LIGHT -> R.drawable.ic_brush_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_brush_brown_and_pink
             else -> R.drawable.ic_brush
         }
     }
@@ -86,6 +94,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.color.BackgroundBottomDark
             THEME_LIGHT -> R.color.BackgroundBottomLight
+            THEME_BROWN_AND_PINK -> R.color.BackgroundPopUpPanelAndBottomBrownAndPink
             else -> R.color.BackgroundBottom
         }
     }
@@ -94,6 +103,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_main_dark
             THEME_LIGHT -> R.drawable.ic_main_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_main_brown_and_pink
             else -> R.drawable.ic_main
         }
     }
@@ -102,6 +112,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_music_dark
             THEME_LIGHT -> R.drawable.ic_music_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_music_brown_and_pink
             else -> R.drawable.ic_music
         }
     }
@@ -110,6 +121,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_heart_orange_dark
             THEME_LIGHT -> R.drawable.ic_heart_orange_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_heart_orange_brown_and_pink
             else -> R.drawable.ic_heart_orange
         }
     }
@@ -118,6 +130,7 @@ object ThemeManager {
         return when (currentTheme){
             THEME_DARK -> R.drawable.music_seekbar_progress_dark
             THEME_LIGHT -> R.drawable.music_seekbar_progress_light
+            THEME_BROWN_AND_PINK -> R.drawable.music_seekbar_progress_brown_and_pink
             else -> R.drawable.music_seekbar_progress
         }
     }
@@ -126,6 +139,7 @@ object ThemeManager {
         return when (currentTheme){
             THEME_DARK -> R.drawable.music_seekbar_thumb_dark
             THEME_LIGHT -> R.drawable.music_seekbar_thumb_light
+            THEME_BROWN_AND_PINK -> R.drawable.music_seekbar_thumb_brown_and_pink
             else -> R.drawable.music_seekbar_thumb
         }
     }
@@ -134,6 +148,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_play_dark
             THEME_LIGHT -> R.drawable.ic_play_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_play
             else -> R.drawable.ic_play
         }
     }
@@ -142,6 +157,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_refresh_dark
             THEME_LIGHT -> R.drawable.ic_refresh_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_refresh
             else -> R.drawable.ic_refresh
         }
     }
@@ -150,6 +166,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_rewind_back_dark
             THEME_LIGHT -> R.drawable.ic_rewind_back_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_rewind_back
             else -> R.drawable.ic_rewind_back
         }
     }
@@ -158,6 +175,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_pause_dark
             THEME_LIGHT -> R.drawable.ic_pause_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_pause
             else -> R.drawable.ic_pause
         }
     }
@@ -166,6 +184,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_rewind_right_dark
             THEME_LIGHT -> R.drawable.ic_rewind_right_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_rewind_right
             else -> R.drawable.ic_rewind_right
         }
     }
@@ -174,6 +193,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_close_panel_dark
             THEME_LIGHT -> R.drawable.ic_close_panel_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_close_panel
             else -> R.drawable.ic_close_panel
         }
     }
@@ -182,6 +202,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_heart_dark
             THEME_LIGHT -> R.drawable.ic_heart_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_heart
             else -> R.drawable.ic_heart
         }
     }
@@ -190,6 +211,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.drawable.ic_cover_background_small_dark
             THEME_LIGHT -> R.drawable.ic_cover_background_small_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_cover_background_small_brown_and_pink
             else -> R.drawable.ic_cover_background_small
         }
     }
@@ -198,6 +220,7 @@ object ThemeManager {
         return when (currentTheme) {
             THEME_DARK -> R.raw.cover_background_animation_dark
             THEME_LIGHT -> R.drawable.ic_cover_background_large_light
+            THEME_BROWN_AND_PINK -> R.drawable.ic_cover_background_large_brown_and_pink
             else -> R.raw.cover_background_animation
         }
     }
@@ -205,7 +228,7 @@ object ThemeManager {
     fun isCoverAnimation(): Boolean {
         return when (currentTheme) {
             THEME_DARK, THEME_DEFAULT -> true
-            THEME_LIGHT -> false
+            THEME_LIGHT, THEME_BROWN_AND_PINK -> false
             else -> true
         }
     }
