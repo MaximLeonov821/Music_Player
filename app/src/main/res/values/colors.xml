@@ -20,6 +20,11 @@
     <color name="BackgroundPanelLineViewLight">#BCBCBC</color>
     <color name="TextsLight">#333333</color>
 
+    <color name="BackgroundBlackAndGreen">@color/black</color>
+    <color name="BackgroundPopUpPanelAndBottomBlackAndGreen">@color/black</color>
+    <color name="BackgroundMusicBlackAndGreen">#1A1A1A</color>
+    <color name="TextsBlackAndGreen">#CCCCCC</color>
+
 
 
     <color name="BackgroundBrownAndPink">#2A1E17</color>

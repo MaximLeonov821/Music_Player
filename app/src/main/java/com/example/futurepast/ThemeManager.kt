@@ -10,7 +10,9 @@ object ThemeManager {
     const val THEME_DEFAULT = "default"
     const val THEME_DARK = "dark"
     const val THEME_LIGHT = "light"
+    const val THEME_BLACK_AND_GREEN = "blackAndGreen"
     const val THEME_BROWN_AND_PINK = "brownAndPink"
+    const val THEME_DARK_INDIGO = "darkIndigo"
 
     private var currentTheme = THEME_DEFAULT
 
