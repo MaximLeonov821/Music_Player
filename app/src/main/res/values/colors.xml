@@ -25,10 +25,14 @@
     <color name="BackgroundMusicBlackAndGreen">#1A1A1A</color>
     <color name="TextsBlackAndGreen">#CCCCCC</color>
 
-
-
     <color name="BackgroundBrownAndPink">#2A1E17</color>
     <color name="BackgroundPopUpPanelAndBottomBrownAndPink">#4A3C31</color>
     <color name="BackgroundMusicBrownAndPink">#BA7BA1</color>
     <color name="TextsBrownAndPink">#F5F0E6</color>
+
+    <color name="BackgroundDarkIndigo">#191725</color>
+    <color name="BackgroundPopUpPanelDarkIndigo">#191725</color>
+    <color name="BackgroundBottomDarkIndigo">#6D3333</color>
+    <color name="BackgroundMusicDarkIndigo">#A56759</color>
+    <color name="TextsDarkIndigo">#CCCCCC</color>
 </resources>
