@@ -47,6 +47,7 @@ class PlayerFragment : Fragment() {
         setupPlayPauseListener()
         observePlaybackState()
         musicPlayerPanel()
+        musicMetadataPanel()
         setupSeekBar()
         observeRefreshState()
         setupMusicPanel()
@@ -262,6 +263,16 @@ class PlayerFragment : Fragment() {
         }
     }
 
+    private fun musicMetadataPanel() {
+        sharedPlayerViewModel.currentMusic.observe(viewLifecycleOwner){music ->
+            if (music != null) {
+                binding.TitleMetadata.text = "Название: " + music.title
+                binding.AuthorMetadata.text = "Артисты: " + music.author
+                binding.DurationMetadata.text = "Длительность: " + formatDuration(music.duration)
+            }
+        }
+    }
+
     private fun musicPlayerPanel(){
         sharedPlayerViewModel.currentMusic.observe(viewLifecycleOwner){music ->
             if (music != null){
@@ -414,15 +425,24 @@ class PlayerFragment : Fragment() {
         return String.format("%d:%02d", minutes, seconds)
     }
 
+    private fun formatDuration(durationMillis: Long): String {
+        val totalSeconds = durationMillis / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        return String.format("%d:%02d", minutes, seconds)
+    }
+
     fun applyTheme() {
         binding.PlayerContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+        binding.MetadataMusicPanel.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+        binding.PanelMusic.setBackgroundResource(ThemeManager.getBackgroundColorRes())
         binding.RefreshBtn.setImageResource(ThemeManager.getRefreshIconRes())
         binding.RewindBackBtn.setImageResource(ThemeManager.getRewindBackIconRes())
         binding.RewindRightBtn.setImageResource(ThemeManager.getRewindRightIconRes())
         binding.HurtBtn.setImageResource(ThemeManager.getHeartIconRes())
-        binding.TextTitle.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
-        binding.TextAuthor.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
-        binding.totalTime.setTextColor(ContextCompat.getColor(binding.root.context, ThemeManager.getTextsColorRes()))
+        ThemeManager.applyToAllTextViews(binding.root) { textView ->
+            textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))
+        }
         sharedPlayerViewModel.isFavouritesAdd.observe(viewLifecycleOwner) {
             binding.HurtBtn.setImageResource(sharedPlayerViewModel.getCurrentHeartIconRes())
         }
