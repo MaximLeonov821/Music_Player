@@ -296,4 +296,76 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/MetadataMusicPanel"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:visibility="gone"
+        android:background="@color/BackgroundRoot"
+        app:layout_constraintBottom_toBottomOf="@+id/PlayerContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@color/black" />
+            
+            <TextView
+                android:id="@+id/TitleMetadata"
+                style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="30dp"
+                android:gravity="center_vertical"
+                android:text="Название: "
+                tools:ignore="HardcodedText" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:id="@+id/AuthorMetadata"
+                style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="30dp"
+                android:gravity="center_vertical"
+                android:text="Автор: "
+                tools:ignore="HardcodedText" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:id="@+id/DurationMetadata"
+                style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="30dp"
+                android:gravity="center_vertical"
+                android:text="Длительность: "
+                tools:ignore="HardcodedText" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@color/black" />
+            
+        </LinearLayout>
+
+
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,6 +31,7 @@ class PlayerFragment : Fragment() {
     private var seekBarUpdateJob: Job? = null
     private var isUserSeeking = false
     private var isPanelMusicVisible = false
+    private var isMetadataVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,30 +71,108 @@ class PlayerFragment : Fragment() {
                 sharedPlayerViewModel.addToFavourites(requireContext(), currentMusic)
             }
         }
+
+        binding.TextTrack.setOnClickListener {
+            if (isPanelMusicVisible) {
+                hideMusicPanel {
+                    showMetadataPanel()
+                }
+            }
+        }
     }
+
+    private fun showMetadataPanel() {
+        if (isMetadataVisible) return
+
+        val panel = binding.MetadataMusicPanel
+        panel.apply {
+            visibility = View.VISIBLE
+            alpha = 0f
+            scaleX = 0.9f
+            scaleY = 0.9f
+        }
+
+        tryApplyBlur(true)
+
+        binding.overlayDim.apply {
+            visibility = View.VISIBLE
+            animate()
+                .alpha(0.55f)
+                .setDuration(200)
+                .setInterpolator(FastOutSlowInInterpolator())
+                .start()
+        }
+
+        panel.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(300)
+            .setInterpolator(FastOutSlowInInterpolator())
+            .start()
+
+        isMetadataVisible = true
+    }
+
+    private fun hideMetadataPanel(onHidden: (() -> Unit)? = null) {
+        if (!isMetadataVisible) {
+            onHidden?.invoke()
+            return
+        }
+
+        val panel = binding.MetadataMusicPanel
+
+        panel.animate()
+            .alpha(0f)
+            .scaleX(0.9f)
+            .scaleY(0.9f)
+            .setDuration(250)
+            .setInterpolator(FastOutSlowInInterpolator())
+            .withEndAction {
+                panel.visibility = View.GONE
+                panel.alpha = 1f
+                panel.scaleX = 1f
+                panel.scaleY = 1f
+                isMetadataVisible = false
+
+                binding.overlayDim.animate()
+                    .alpha(0f)
+                    .setDuration(180)
+                    .withEndAction {
+                        binding.overlayDim.visibility = View.GONE
+                        tryApplyBlur(false)
+                    }
+                    .start()
+
+                onHidden?.invoke()
+            }
+            .start()
+    }
+
 
     private fun setupMusicPanel() {
         binding.ToggleMusicPanel.setOnClickListener {
             toggleMusicPanel()
         }
         binding.overlayDim.setOnClickListener {
-            hideMusicPanel()
+            if (isMetadataVisible) hideMetadataPanel() else hideMusicPanel()
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (isPanelMusicVisible) {
-                        hideMusicPanel()
-                    } else {
-                        isEnabled = false
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    when {
+                        isMetadataVisible -> hideMetadataPanel()
+                        isPanelMusicVisible -> hideMusicPanel()
+                        else -> {
+                            isEnabled = false
+                            requireActivity().onBackPressedDispatcher.onBackPressed()
+                        }
                     }
                 }
             }
         )
-
     }
 
     private fun toggleMusicPanel() {
@@ -135,39 +214,42 @@ class PlayerFragment : Fragment() {
             .start()
     }
 
-    private fun hideMusicPanel() {
-        if (!isPanelMusicVisible) return
-        tryApplyBlur(false)
-        binding.overlayDim.animate()
-            .alpha(0f)
-            .setDuration(180)
-            .withEndAction {
-                binding.overlayDim.visibility = View.GONE
-            }
-            .start()
-        val h = binding.PanelMusic.height
-        if (h == 0) {
-            binding.PanelMusic.doOnLayout { panel ->
-                animatePanelDown(panel.height)
-            }
-        } else {
-            animatePanelDown(h)
+    private fun hideMusicPanel(onHidden: (() -> Unit)? = null) {
+        if (!isPanelMusicVisible) {
+            onHidden?.invoke()
+            return
         }
 
-        isPanelMusicVisible = false
+        val h = binding.PanelMusic.height
+        val animateAction = {
+            binding.PanelMusic.animate()
+                .translationY(h.toFloat())
+                .setDuration(260)
+                .setInterpolator(FastOutSlowInInterpolator())
+                .withEndAction {
+                    binding.PanelMusic.visibility = View.GONE
+                    binding.PanelMusic.translationY = 0f
+                    isPanelMusicVisible = false
+
+                    binding.overlayDim.animate()
+                        .alpha(0f)
+                        .setDuration(180)
+                        .withEndAction {
+                            binding.overlayDim.visibility = View.GONE
+                            tryApplyBlur(false)
+                        }
+                        .start()
+
+                    onHidden?.invoke()
+                }
+                .start()
+        }
+
+        if (h == 0) {
+            binding.PanelMusic.doOnLayout { animateAction() }
+        } else animateAction()
     }
 
-    private fun animatePanelDown(panelHeightPx: Int) {
-        binding.PanelMusic.animate()
-            .translationY(panelHeightPx.toFloat())
-            .setDuration(260)
-            .setInterpolator(FastOutSlowInInterpolator())
-            .withEndAction {
-                binding.PanelMusic.visibility = View.GONE
-                binding.PanelMusic.translationY = 0f
-            }
-            .start()
-    }
     private fun tryApplyBlur(enable: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (enable) {
