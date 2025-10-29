@@ -300,7 +300,7 @@
         android:id="@+id/MetadataMusicPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="@color/BackgroundRoot"
         app:layout_constraintBottom_toBottomOf="@+id/PlayerContainer"
         app:layout_constraintEnd_toEndOf="parent"

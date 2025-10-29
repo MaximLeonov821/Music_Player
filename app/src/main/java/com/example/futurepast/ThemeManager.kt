@@ -95,6 +95,17 @@ object ThemeManager {
         }
     }
 
+    fun getMenuIconRes(): Int {
+        return when (currentTheme) {
+            THEME_DARK -> R.drawable.ic_menu_player
+            THEME_LIGHT -> R.drawable.ic_menu_player_dark
+            THEME_BLACK_AND_GREEN -> R.drawable.ic_menu_player
+            THEME_BROWN_AND_PINK -> R.drawable.ic_menu_player
+            THEME_DARK_INDIGO -> R.drawable.ic_menu_player
+            else -> R.drawable.ic_menu_player
+        }
+    }
+
     fun getBrushIconRes(): Int{
         return when (currentTheme){
             THEME_DARK -> R.drawable.ic_brush_dark

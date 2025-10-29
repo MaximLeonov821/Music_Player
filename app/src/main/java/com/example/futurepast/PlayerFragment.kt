@@ -440,6 +440,7 @@ class PlayerFragment : Fragment() {
         binding.RewindBackBtn.setImageResource(ThemeManager.getRewindBackIconRes())
         binding.RewindRightBtn.setImageResource(ThemeManager.getRewindRightIconRes())
         binding.HurtBtn.setImageResource(ThemeManager.getHeartIconRes())
+        binding.ToggleMusicPanel.setImageResource(ThemeManager.getMenuIconRes())
         ThemeManager.applyToAllTextViews(binding.root) { textView ->
             textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))
         }
