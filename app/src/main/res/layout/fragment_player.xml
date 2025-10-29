@@ -17,11 +17,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageButton
+            android:id="@+id/ToggleMusicPanel"
+            style="@style/SmallImageButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="300dp"
+            android:layout_marginTop="45dp"
+            android:src="@drawable/ic_menu_player"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <FrameLayout
             android:id="@+id/imageFrameLayout"
-            android:layout_width="350dp"
-            android:layout_height="320dp"
-            android:layout_marginTop="40dp"
+            android:layout_width="330dp"
+            android:layout_height="290dp"
+            android:layout_marginTop="70dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -212,6 +224,45 @@
             android:layout_height="60dp"
             android:contentDescription="Избранное"
             android:src="@drawable/ic_heart_orange"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/PanelMusic"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/BackgroundRoot"
+        style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/black"/>
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text="О треке"
+            android:gravity="center"
+            tools:ignore="HardcodedText"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/black" />
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Текст музыки"
+            android:gravity="center"
             tools:ignore="HardcodedText" />
     </LinearLayout>
 

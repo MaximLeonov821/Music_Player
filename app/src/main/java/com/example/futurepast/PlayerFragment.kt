@@ -24,6 +24,7 @@ class PlayerFragment : Fragment() {
     private val sharedPlayerViewModel: SharedPlayerViewModel by activityViewModels()
     private var seekBarUpdateJob: Job? = null
     private var isUserSeeking = false
+    private var isPanelMusicVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +42,8 @@ class PlayerFragment : Fragment() {
         musicPlayerPanel()
         setupSeekBar()
         observeRefreshState()
+
+        binding.PanelMusic.translationY = binding.PanelMusic.height.toFloat()
 
         binding.RewindRightBtn.setOnClickListener {
             sharedPlayerViewModel.nextMusic(requireContext())
@@ -60,6 +63,34 @@ class PlayerFragment : Fragment() {
                 sharedPlayerViewModel.addToFavourites(requireContext(), currentMusic)
             }
         }
+
+        binding.ToggleMusicPanel.setOnClickListener {
+            if (isPanelMusicVisible) {
+                hideMusicPanel()
+            }else {
+                showMusicPanel()
+            }
+        }
+    }
+
+    private fun showMusicPanel() {
+        binding.PanelMusic.visibility = View.VISIBLE
+        binding.PanelMusic.animate()
+            .translationY(0f)
+            .setDuration(300)
+            .start()
+        isPanelMusicVisible = true
+    }
+
+    private fun hideMusicPanel() {
+        binding.PanelMusic.animate()
+            .translationY(binding.PanelMusic.height.toFloat())
+            .setDuration(300)
+            .withEndAction {
+                binding.PanelMusic.visibility = View.GONE
+            }
+            .start()
+        isPanelMusicVisible = false
     }
 
     private fun musicPlayerPanel(){
