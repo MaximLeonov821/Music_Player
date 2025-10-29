@@ -371,4 +371,38 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/LyricsPanel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/BackgroundRoot"
+        android:visibility="gone"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/PlayerContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/TextLyricsContent"
+                style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:text="Здесь будет текст песни"
+                tools:ignore="HardcodedText" />
+        </ScrollView>
+    </FrameLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -32,6 +32,7 @@ class PlayerFragment : Fragment() {
     private var isUserSeeking = false
     private var isPanelMusicVisible = false
     private var isMetadataVisible = false
+    private var isLyricsVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,6 +81,82 @@ class PlayerFragment : Fragment() {
                 }
             }
         }
+
+        binding.TextLyrics.setOnClickListener {
+            if (!isLyricsVisible) {
+                hideMusicPanel {
+                    showLyricsPanel()
+                }
+            }
+        }
+    }
+
+    private fun showLyricsPanel() {
+        if (isLyricsVisible) return
+
+        val panel = binding.LyricsPanel
+        panel.apply {
+            visibility = View.VISIBLE
+            alpha = 0f
+            scaleX = 0.9f
+            scaleY = 0.9f
+        }
+
+        tryApplyBlur(true)
+
+        binding.overlayDim.apply {
+            visibility = View.VISIBLE
+            animate()
+                .alpha(0.55f)
+                .setDuration(200)
+                .setInterpolator(FastOutSlowInInterpolator())
+                .start()
+        }
+
+        panel.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(300)
+            .setInterpolator(FastOutSlowInInterpolator())
+            .start()
+
+        isLyricsVisible = true
+    }
+
+    private fun hideLyricsPanel(onHidden: (() -> Unit)? = null) {
+        if (!isLyricsVisible) {
+            onHidden?.invoke()
+            return
+        }
+
+        val panel = binding.LyricsPanel
+
+        panel.animate()
+            .alpha(0f)
+            .scaleX(0.9f)
+            .scaleY(0.9f)
+            .setDuration(250)
+            .setInterpolator(FastOutSlowInInterpolator())
+            .withEndAction {
+                panel.visibility = View.GONE
+                panel.alpha = 1f
+                panel.scaleX = 1f
+                panel.scaleY = 1f
+                isLyricsVisible = false
+
+                binding.overlayDim.animate()
+                    .alpha(0f)
+                    .setDuration(180)
+                    .withEndAction {
+                        binding.overlayDim.visibility = View.GONE
+                        tryApplyBlur(false)
+                    }
+                    .start()
+
+                onHidden?.invoke()
+            }
+            .start()
     }
 
     private fun showMetadataPanel() {
@@ -156,7 +233,13 @@ class PlayerFragment : Fragment() {
             toggleMusicPanel()
         }
         binding.overlayDim.setOnClickListener {
-            if (isMetadataVisible) hideMetadataPanel() else hideMusicPanel()
+            if (isMetadataVisible){
+                hideMetadataPanel()
+            } else if (isLyricsVisible) {
+                hideLyricsPanel()
+            } else {
+                hideMusicPanel()
+            }
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -166,6 +249,7 @@ class PlayerFragment : Fragment() {
                     when {
                         isMetadataVisible -> hideMetadataPanel()
                         isPanelMusicVisible -> hideMusicPanel()
+                        isLyricsVisible -> hideLyricsPanel()
                         else -> {
                             isEnabled = false
                             requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -436,6 +520,7 @@ class PlayerFragment : Fragment() {
         binding.PlayerContainer.setBackgroundResource(ThemeManager.getBackgroundColorRes())
         binding.MetadataMusicPanel.setBackgroundResource(ThemeManager.getBackgroundColorRes())
         binding.PanelMusic.setBackgroundResource(ThemeManager.getBackgroundColorRes())
+        binding.LyricsPanel.setBackgroundResource(ThemeManager.getBackgroundColorRes())
         binding.RefreshBtn.setImageResource(ThemeManager.getRefreshIconRes())
         binding.RewindBackBtn.setImageResource(ThemeManager.getRewindBackIconRes())
         binding.RewindRightBtn.setImageResource(ThemeManager.getRewindRightIconRes())
