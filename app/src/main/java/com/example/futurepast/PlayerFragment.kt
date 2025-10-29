@@ -10,7 +10,13 @@ import androidx.fragment.app.activityViewModels
 import com.example.futurepast.databinding.FragmentPlayerBinding
 import com.airbnb.lottie.LottieDrawable
 import android.animation.ValueAnimator
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.widget.SeekBar
+import androidx.activity.OnBackPressedCallback
+import androidx.core.view.doOnLayout
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -42,6 +48,7 @@ class PlayerFragment : Fragment() {
         musicPlayerPanel()
         setupSeekBar()
         observeRefreshState()
+        setupMusicPanel()
 
         binding.PanelMusic.translationY = binding.PanelMusic.height.toFloat()
 
@@ -63,34 +70,114 @@ class PlayerFragment : Fragment() {
                 sharedPlayerViewModel.addToFavourites(requireContext(), currentMusic)
             }
         }
+    }
 
+    private fun setupMusicPanel() {
         binding.ToggleMusicPanel.setOnClickListener {
-            if (isPanelMusicVisible) {
-                hideMusicPanel()
-            }else {
-                showMusicPanel()
-            }
+            toggleMusicPanel()
         }
+        binding.overlayDim.setOnClickListener {
+            hideMusicPanel()
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (isPanelMusicVisible) {
+                        hideMusicPanel()
+                    } else {
+                        isEnabled = false
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    }
+                }
+            }
+        )
+
+    }
+
+    private fun toggleMusicPanel() {
+        if (isPanelMusicVisible) hideMusicPanel() else showMusicPanel()
     }
 
     private fun showMusicPanel() {
-        binding.PanelMusic.visibility = View.VISIBLE
-        binding.PanelMusic.animate()
-            .translationY(0f)
-            .setDuration(300)
+        if (isPanelMusicVisible) return
+
+        binding.overlayDim.visibility = View.VISIBLE
+        binding.overlayDim.alpha = 0f
+        binding.overlayDim.animate()
+            .alpha(0.55f)
+            .setDuration(200)
             .start()
+
+        tryApplyBlur(true)
+
+        binding.PanelMusic.visibility = View.VISIBLE
+
+        val panelHeight = binding.PanelMusic.height
+        if (panelHeight == 0) {
+            binding.PanelMusic.doOnLayout { panel ->
+                animatePanelUp(panel.height)
+            }
+        } else {
+            animatePanelUp(panelHeight)
+        }
+
         isPanelMusicVisible = true
     }
 
-    private fun hideMusicPanel() {
+    private fun animatePanelUp(panelHeightPx: Int) {
+        binding.PanelMusic.translationY = panelHeightPx.toFloat()
         binding.PanelMusic.animate()
-            .translationY(binding.PanelMusic.height.toFloat())
+            .translationY(0f)
             .setDuration(300)
+            .setInterpolator(FastOutSlowInInterpolator())
+            .start()
+    }
+
+    private fun hideMusicPanel() {
+        if (!isPanelMusicVisible) return
+        tryApplyBlur(false)
+        binding.overlayDim.animate()
+            .alpha(0f)
+            .setDuration(180)
             .withEndAction {
-                binding.PanelMusic.visibility = View.GONE
+                binding.overlayDim.visibility = View.GONE
             }
             .start()
+        val h = binding.PanelMusic.height
+        if (h == 0) {
+            binding.PanelMusic.doOnLayout { panel ->
+                animatePanelDown(panel.height)
+            }
+        } else {
+            animatePanelDown(h)
+        }
+
         isPanelMusicVisible = false
+    }
+
+    private fun animatePanelDown(panelHeightPx: Int) {
+        binding.PanelMusic.animate()
+            .translationY(panelHeightPx.toFloat())
+            .setDuration(260)
+            .setInterpolator(FastOutSlowInInterpolator())
+            .withEndAction {
+                binding.PanelMusic.visibility = View.GONE
+                binding.PanelMusic.translationY = 0f
+            }
+            .start()
+    }
+    private fun tryApplyBlur(enable: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (enable) {
+                val radius = 20f
+                val effect = RenderEffect.createBlurEffect(radius, radius, Shader.TileMode.CLAMP)
+                binding.PlayerContainer.setRenderEffect(effect)
+            } else {
+                binding.PlayerContainer.setRenderEffect(null)
+            }
+        }
     }
 
     private fun musicPlayerPanel(){

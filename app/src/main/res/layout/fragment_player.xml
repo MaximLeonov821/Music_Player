@@ -227,43 +227,73 @@
             tools:ignore="HardcodedText" />
     </LinearLayout>
 
-    <LinearLayout
+    <View
+        android:id="@+id/overlayDim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <FrameLayout
         android:id="@+id/PanelMusic"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/BackgroundRoot"
-        style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
-        android:orientation="vertical"
+        android:layout_height="260dp"
         android:visibility="gone"
+        android:background="@color/BackgroundRoot"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="@color/black"/>
-
-        <TextView
-            style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:text="О треке"
-            android:gravity="center"
-            tools:ignore="HardcodedText"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="@color/black" />
-
-        <TextView
-            style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Текст музыки"
-            android:gravity="center"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@color/black" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+                android:id="@+id/TextTrack"
+                android:layout_width="match_parent"
+                android:layout_height="125dp"
+                android:gravity="center"
+                android:text="О треке"
+                android:clickable="true"
+                android:focusable="true"
+                tools:ignore="HardcodedText" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@color/black" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
+                android:id="@+id/TextLyrics"
+                android:layout_width="match_parent"
+                android:layout_height="125dp"
+                android:gravity="center"
+                android:text="Текст музыки"
+                android:clickable="true"
+                android:focusable="true"
+                tools:ignore="HardcodedText" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@color/black" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
