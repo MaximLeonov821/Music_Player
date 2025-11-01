@@ -232,6 +232,11 @@ class PlayerFragment : Fragment() {
         binding.ToggleMusicPanel.setOnClickListener {
             toggleMusicPanel()
         }
+
+        binding.closeLyricsPanel.setOnClickListener {
+            hideLyricsPanel()
+        }
+
         binding.overlayDim.setOnClickListener {
             if (isMetadataVisible){
                 hideMetadataPanel()
