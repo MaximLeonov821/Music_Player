@@ -52,6 +52,7 @@ class PlayerFragment : Fragment() {
         setupSeekBar()
         observeRefreshState()
         setupMusicPanel()
+        setupLyricsObserver()
 
         binding.PanelMusic.translationY = binding.PanelMusic.height.toFloat()
 
@@ -90,9 +91,23 @@ class PlayerFragment : Fragment() {
             }
         }
     }
+    private fun setupLyricsObserver() {
+        sharedPlayerViewModel.currentLyrics.observe(viewLifecycleOwner) { lyrics ->
+            binding.TextLyricsContent.text = lyrics ?: "Текст песни не найден"
+        }
+    }
 
     private fun showLyricsPanel() {
         if (isLyricsVisible) return
+
+        val currentMusic = sharedPlayerViewModel.currentMusic.value
+        if (currentMusic != null) {
+
+            sharedPlayerViewModel.loadLyricsForCurrentTrack(
+                currentMusic.author,
+                currentMusic.title
+            )
+        }
 
         val panel = binding.LyricsPanel
         panel.apply {
@@ -154,10 +169,13 @@ class PlayerFragment : Fragment() {
                     }
                     .start()
 
+                sharedPlayerViewModel.clearLyrics()
+
                 onHidden?.invoke()
             }
             .start()
     }
+
 
     private fun showMetadataPanel() {
         if (isMetadataVisible) return

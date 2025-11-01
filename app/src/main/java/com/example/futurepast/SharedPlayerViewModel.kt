@@ -5,6 +5,8 @@ import android.media.MediaPlayer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 class SharedPlayerViewModel : ViewModel() {
     private var mediaPlayer: MediaPlayer? = null
@@ -29,6 +31,28 @@ class SharedPlayerViewModel : ViewModel() {
     val isFavouritesShuffled: LiveData<Boolean> get() = _isFavouritesShuffled
     private var favouritesPlayOrder: MutableList<Int> = mutableListOf()
     private var currentIndexInOrder = 0
+    private val lyricsApiService = LyricsApiService()
+    private val _currentLyrics = MutableLiveData<String?>()
+    val currentLyrics: LiveData<String?> get() = _currentLyrics
+    private var lyricsLoadingJob: kotlinx.coroutines.Job? = null
+
+    fun loadLyricsForCurrentTrack(artist: String, title: String) {
+        lyricsLoadingJob?.cancel()
+        lyricsLoadingJob = viewModelScope.launch {
+            _currentLyrics.postValue("Загрузка текста...")
+            try {
+                val lyrics = lyricsApiService.getLyrics(artist, title)
+                _currentLyrics.postValue(lyrics ?: "Текст песни не найден")
+            } catch (e: Exception) {
+                _currentLyrics.postValue("Ошибка загрузки текста")
+            }
+        }
+    }
+
+    fun clearLyrics() {
+        lyricsLoadingJob?.cancel()
+        _currentLyrics.value = null
+    }
 
     fun setMusicList(list: List<MusicData>) {
         _musicList.value = list
@@ -50,6 +74,7 @@ class SharedPlayerViewModel : ViewModel() {
             _isRewindRightOrClose.value = true
             val isInFavourites = _favouritesList.value?.any { it.id == music.id } ?: false
             _isFavouritesAdd.value = isInFavourites
+            clearLyrics()
 
             mediaPlayer!!.setOnCompletionListener {
                 _isPlaying.value = false
@@ -97,6 +122,7 @@ class SharedPlayerViewModel : ViewModel() {
         mediaPlayer = null
         _isPlaying.value = false
         _isRewindRightOrClose.value = false
+        clearLyrics()
     }
 
     fun toggleShuffleForAll() {
@@ -276,6 +302,7 @@ class SharedPlayerViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         stopMusic()
+        lyricsLoadingJob?.cancel()
     }
 
     fun getDuration(): Int {
