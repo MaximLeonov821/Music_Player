@@ -31,7 +31,7 @@ class SharedPlayerViewModel : ViewModel() {
     val isFavouritesShuffled: LiveData<Boolean> get() = _isFavouritesShuffled
     private var favouritesPlayOrder: MutableList<Int> = mutableListOf()
     private var currentIndexInOrder = 0
-    private val lyricsApiService = LyricsApiService()
+    private val geniusApiService = GeniusApiService()
     private val _currentLyrics = MutableLiveData<String?>()
     val currentLyrics: LiveData<String?> get() = _currentLyrics
     private var lyricsLoadingJob: kotlinx.coroutines.Job? = null
@@ -39,12 +39,18 @@ class SharedPlayerViewModel : ViewModel() {
     fun loadLyricsForCurrentTrack(artist: String, title: String) {
         lyricsLoadingJob?.cancel()
         lyricsLoadingJob = viewModelScope.launch {
-            _currentLyrics.postValue("Загрузка текста...")
+            _currentLyrics.postValue("🔍 Поиск текста через Genius...")
             try {
-                val lyrics = lyricsApiService.getLyrics(artist, title)
-                _currentLyrics.postValue(lyrics ?: "Текст песни не найден")
+                val lyrics = geniusApiService.getLyrics(artist, title)
+                if (lyrics != null) {
+                    _currentLyrics.postValue(lyrics)
+                } else {
+                    _currentLyrics.postValue("""
+                        Текст песни не найден в базе Genius 😔
+                    """.trimIndent())
+                }
             } catch (e: Exception) {
-                _currentLyrics.postValue("Ошибка загрузки текста")
+                _currentLyrics.postValue("Ошибка загрузки из Genius: ${e.message}")
             }
         }
     }
@@ -53,7 +59,6 @@ class SharedPlayerViewModel : ViewModel() {
         lyricsLoadingJob?.cancel()
         _currentLyrics.value = null
     }
-
     fun setMusicList(list: List<MusicData>) {
         _musicList.value = list
         playOrder = list.indices.toMutableList()
