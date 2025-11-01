@@ -531,6 +531,7 @@ class PlayerFragment : Fragment() {
         binding.RewindRightBtn.setImageResource(ThemeManager.getRewindRightIconRes())
         binding.HurtBtn.setImageResource(ThemeManager.getHeartIconRes())
         binding.ToggleMusicPanel.setImageResource(ThemeManager.getMenuIconRes())
+        binding.closeLyricsPanel.setImageResource(ThemeManager.getCloseIconRes())
         ThemeManager.applyToAllTextViews(binding.root) { textView ->
             textView.setTextColor(ContextCompat.getColor(textView.context, ThemeManager.getTextsColorRes()))
         }
