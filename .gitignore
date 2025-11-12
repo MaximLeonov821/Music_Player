@@ -62,5 +62,5 @@ replay_pid*
 .kotlin/
 
 #ENV
-assets/env
+env
 
