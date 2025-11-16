@@ -46,7 +46,8 @@ class FavouritesFragment : Fragment() {
         favouritesAdapter = FavouritesAdapter(
             sharedPlayerViewModel.favouritesList.value ?: emptyList(),
             onItemClick = { music ->
-                if (sharedPlayerViewModel.isPlaying.value == true) {
+                if (sharedPlayerViewModel.isPlaying.value == true &&
+                    sharedPlayerViewModel.currentMusic.value?.id == music.id) {
                     sharedPlayerViewModel.pauseMusic()
                 }else {
                     sharedPlayerViewModel.playMusic(requireContext(), music, true)

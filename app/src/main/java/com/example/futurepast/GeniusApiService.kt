@@ -25,8 +25,11 @@ class GeniusApiService(private val apiKey: String) {
         println("🎵 Поиск текста для: '$artist' - '$title'")
 
         try {
-            val query = "${artist.trim()} ${title.trim()}"
-            println("🔍 Поисковый запрос: '$query'")
+            val cleanArtist = cleanArtistName(artist)
+            val cleanTitle = cleanTitle(title)
+
+            val query = "$cleanArtist $cleanTitle"
+            println("🔍 Очищенный запрос: '$query'")
 
             val searchUrl = "https://api.genius.com/search?q=${query.encodeURL()}"
             println("🌐 Search URL: $searchUrl")
@@ -34,8 +37,8 @@ class GeniusApiService(private val apiKey: String) {
             val searchResponse = apiRequest(searchUrl)
             println("📡 Search Response: ${searchResponse != null}")
 
-            val url = searchResponse?.response?.hits?.firstOrNull()?.result?.url
-            println("🔗 Найден URL: $url")
+            val url = findBestLyricsUrl(searchResponse, cleanArtist, cleanTitle)
+            println("🔗 Выбран URL: $url")
 
             return@withContext url?.let {
                 println("📝 Парсим текст с URL...")
@@ -46,6 +49,170 @@ class GeniusApiService(private val apiKey: String) {
             e.printStackTrace()
             null
         }
+    }
+
+    private fun cleanArtistName(artist: String): String {
+        var cleaned = artist.trim()
+        cleaned = cleaned.split(",").first().trim()
+        val wordsToRemove = listOf("feat.", "ft.", "featuring", "&", "and", "with")
+        wordsToRemove.forEach { word ->
+            cleaned = cleaned.replace(Regex("$word.*", RegexOption.IGNORE_CASE), "").trim()
+        }
+        return cleaned
+    }
+
+    private fun cleanTitle(title: String): String {
+        var cleaned = title.trim()
+        cleaned = cleaned.replace(Regex("\\s*\\([^)]*\\)"), "")
+        cleaned = cleaned.replace(Regex("\\s*[\\[\\{].*?[\\]\\}]"), "")
+        return cleaned.trim()
+    }
+
+    private fun findBestLyricsUrl(
+        searchResponse: GeniusSearchResponse?,
+        artist: String,
+        title: String
+    ): String? {
+        val hits = searchResponse?.response?.hits ?: return null
+
+        println("🎯 Всего найдено результатов: ${hits.size}")
+
+        hits.forEachIndexed { index, hit ->
+            println("   ${index + 1}. ${hit.result?.url}")
+        }
+
+        val isNonEnglish = artist.contains(Regex("[а-яА-Я]")) || title.contains(Regex("[а-яА-Я]"))
+
+        if (isNonEnglish) {
+            println("🌍 Обнаружен не-английский запрос, используем специальную логику")
+            return findUrlForNonEnglish(hits, artist, title)
+        }
+
+        var bestUrl: String? = null
+        var bestScore = -1000
+
+        hits.forEach { hit ->
+            val url = hit.result?.url ?: return@forEach
+            val score = calculateUrlScore(url, artist, title)
+            println("   📊 Оценка '$url': $score")
+
+            if (score > bestScore) {
+                bestScore = score
+                bestUrl = url
+            }
+        }
+
+        return bestUrl
+    }
+
+    private fun findUrlForNonEnglish(
+        hits: List<GeniusHit>,
+        artist: String,
+        title: String
+    ): String? {
+        val translitArtist = transliterateToEnglish(artist)
+        val translitTitle = transliterateToEnglish(title)
+
+        println("🔤 Транслитерация: '$translitArtist' - '$translitTitle'")
+
+        val translitHit = hits.firstOrNull { hit ->
+            val url = hit.result?.url?.lowercase() ?: ""
+            url.contains(translitArtist.lowercase().replace(" ", "-")) ||
+                    url.contains(translitTitle.lowercase().replace(" ", "-"))
+        }
+
+        if (translitHit != null) {
+            println("✅ Найден URL по транслитерации: ${translitHit.result?.url}")
+            return translitHit.result?.url
+        }
+
+        val englishVersions = mapOf(
+            "виктор цой" to "kino",
+            "группа крови" to "blood type",
+            "кино" to "kino",
+            "владимир высоцкий" to "vladimir vysotsky",
+            "алла пугачева" to "alla pugacheva"
+        )
+
+        val engArtist = englishVersions[artist.lowercase()] ?: artist
+        val engTitle = englishVersions[title.lowercase()] ?: title
+
+        val englishHit = hits.firstOrNull { hit ->
+            val url = hit.result?.url?.lowercase() ?: ""
+            url.contains(engArtist.lowercase().replace(" ", "-")) ||
+                    url.contains(engTitle.lowercase().replace(" ", "-"))
+        }
+
+        if (englishHit != null) {
+            println("✅ Найден английский вариант: ${englishHit.result?.url}")
+            return englishHit.result?.url
+        }
+
+        var bestUrl: String? = null
+        var bestScore = -1000
+
+        hits.forEach { hit ->
+            val url = hit.result?.url ?: return@forEach
+            val score = calculateUrlScore(url, artist, title)
+            println("   📊 Оценка '$url': $score")
+
+            if (score > bestScore) {
+                bestScore = score
+                bestUrl = url
+            }
+        }
+
+        if (bestScore > -20) {
+            println("⚠️ Используем лучший найденный результат: $bestUrl")
+            return bestUrl
+        }
+
+        println("❌ Не найдено подходящих результатов для не-английского трека")
+        return null
+    }
+
+    private fun transliterateToEnglish(text: String): String {
+        val translitMap = mapOf(
+            'а' to "a", 'б' to "b", 'в' to "v", 'г' to "g", 'д' to "d",
+            'е' to "e", 'ё' to "yo", 'ж' to "zh", 'з' to "z", 'и' to "i",
+            'й' to "y", 'к' to "k", 'л' to "l", 'м' to "m", 'н' to "n",
+            'о' to "o", 'п' to "p", 'р' to "r", 'с' to "s", 'т' to "t",
+            'у' to "u", 'ф' to "f", 'х' to "kh", 'ц' to "ts", 'ч' to "ch",
+            'ш' to "sh", 'щ' to "shch", 'ъ' to "", 'ы' to "y", 'ь' to "",
+            'э' to "e", 'ю' to "yu", 'я' to "ya"
+        )
+
+        return text.lowercase().map { char ->
+            translitMap[char] ?: char.toString()
+        }.joinToString("")
+    }
+
+    private fun calculateUrlScore(url: String, artist: String, title: String): Int {
+        var score = 0
+        val lowerUrl = url.lowercase()
+        val lowerArtist = artist.lowercase().replace(" ", "-")
+        val lowerTitle = title.lowercase().replace(" ", "-")
+
+        if (lowerUrl.contains(lowerArtist)) score += 30
+
+        if (lowerUrl.contains(lowerTitle)) score += 30
+
+        val penaltyWords = listOf(
+            "translation", "turkce", "türkçe", "ceviri", "çeviri",
+            "traducao", "tradução", "traduction", "übersetzung", "traduccion",
+            "deutsch", "español", "français", "italiano", "português",
+            "русский", "polski", "shqip", "dansk", "persian"
+        )
+
+        penaltyWords.forEach { word ->
+            if (lowerUrl.contains(word)) score -= 50
+        }
+
+        if (Regex("\\d{4,}").containsMatchIn(url)) score -= 20
+
+        if (lowerUrl.matches(Regex(".*${lowerArtist}.*${lowerTitle}.*lyrics.*"))) score += 40
+
+        return score
     }
 
     private fun apiRequest(urlString: String): GeniusSearchResponse? {
@@ -268,12 +435,18 @@ class GeniusApiService(private val apiKey: String) {
     private fun enhanceStructure(text: String): String {
         var result = text
 
-        result = result.replace(Regex("\\[Intro\\]"), "━━━━━━━━━━━━━━━━━━━━\n🎤 INTRO\n━━━━━━━━━━━━━━━━━━━━")
-        result = result.replace(Regex("\\[Verse\\s*\\d*\\]"), "────────────────────\n🎵 VERSE\n────────────────────")
-        result = result.replace(Regex("\\[Chorus\\]"), "════════════════════\n🎶 CHORUS\n════════════════════")
-        result = result.replace(Regex("\\[Hook\\]"), "────────────────────\n🪝 HOOK\n────────────────────")
-        result = result.replace(Regex("\\[Bridge\\]"), "────────────────────\n🌉 BRIDGE\n────────────────────")
-        result = result.replace(Regex("\\[Outro\\]"), "━━━━━━━━━━━━━━━━━━━━\n👋 OUTRO\n━━━━━━━━━━━━━━━━━━━━")
+        result = result.replace(Regex("\\[Intro.*\\]"), "━━━━━━━━━━━━━━━━━━━━\n🎤 INTRO\n━━━━━━━━━━━━━━━━━━━━")
+        result = result.replace(Regex("\\[Verse.*\\]"), "────────────────────\n🎵 VERSE\n────────────────────")
+        result = result.replace(Regex("\\[Chorus.*\\]"), "════════════════════\n🎶 CHORUS\n════════════════════")
+        result = result.replace(Regex("\\[Hook.*\\]"), "────────────────────\n🪝 HOOK\n────────────────────")
+        result = result.replace(Regex("\\[Bridge.*\\]"), "────────────────────\n🌉 BRIDGE\n────────────────────")
+        result = result.replace(Regex("\\[Outro.*\\]"), "━━━━━━━━━━━━━━━━━━━━\n👋 OUTRO\n━━━━━━━━━━━━━━━━━━━━")
+        result = result.replace(Regex("\\[Pre-Chorus.*\\]"), "────────────────────\n⏭️ PRE-CHORUS\n────────────────────")
+
+        result = result.replace(Regex("\\[Интро.*\\]"), "━━━━━━━━━━━━━━━━━━━━\n🎤 ИНТРО\n━━━━━━━━━━━━━━━━━━━━")
+        result = result.replace(Regex("\\[Куплет.*\\]"), "────────────────────\n🎵 КУПЛЕТ\n────────────────────")
+        result = result.replace(Regex("\\[Припев.*\\]"), "════════════════════\n🎶 ПРИПЕВ\n════════════════════")
+        result = result.replace(Regex("\\[Бридж.*\\]"), "────────────────────\n🌉 БРИДЖ\n────────────────────")
 
         result = result.trim()
         result = result.replace(Regex("\n{3,}"), "\n\n")

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class SharedPlayerViewModel : ViewModel() {
@@ -44,42 +45,79 @@ class SharedPlayerViewModel : ViewModel() {
             println("🚀 Начинаем загрузку текста для текущего трека...")
             _currentLyrics.postValue("🔍 Ищем текст песни...")
 
-            val mmr = android.media.MediaMetadataRetriever()
             try {
-                mmr.setDataSource(context, currentMusic.contentUri)
-                val artist = mmr.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_ARTIST) ?: ""
-                val title = mmr.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_TITLE) ?: ""
+                val mmr = android.media.MediaMetadataRetriever()
+                try {
+                    mmr.setDataSource(context, currentMusic.contentUri)
+                    var artist = mmr.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_ARTIST) ?: ""
+                    var title = mmr.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_TITLE) ?: ""
 
-                println("🎵 Метаданные трека:")
-                println("   👨‍🎤 Artist: '$artist'")
-                println("   🎵 Title: '$title'")
-                println("   🆔 Music ID: ${currentMusic.id}")
+                    artist = cleanMetadata(artist)
+                    title = cleanMetadata(title)
 
-                println("🌐 Запрашиваем текст через Genius API...")
-                val lyrics = try {
-                    geniusApiService.getLyrics(artist, title)
+                    println("🎵 Очищенные метаданные:")
+                    println("   👨‍🎤 Artist: '$artist'")
+                    println("   🎵 Title: '$title'")
+                    println("   🆔 Music ID: ${currentMusic.id}")
+
+                    if (!isActive) {
+                        println("⏹️ Коррутина неактивна, прерываем загрузку")
+                        return@launch
+                    }
+
+                    println("🌐 Запрашиваем текст через Genius API...")
+                    val lyrics = try {
+                        geniusApiService.getLyrics(artist, title)
+                    } catch (e: Exception) {
+                        println("❌ Исключение при получении текста: ${e.message}")
+                        null
+                    }
+
+                    if (!isActive) {
+                        println("⏹️ Коррутина неактивна после получения текста")
+                        return@launch
+                    }
+
+                    val finalLyrics = if (lyrics != null && lyrics.length > 10) {
+                        lyrics
+                    } else {
+                        "😔 Текст песни не найден\n\nGenius лучше работает с английскими песнями. " +
+                                "Для русских и других не-английских треков текст может быть недоступен."
+                    }
+
+                    println("🎯 Результат получения текста: ${if (lyrics != null) "УСПЕХ" else "НЕ НАЙДЕНО"}")
+                    _currentLyrics.postValue(finalLyrics)
+
                 } catch (e: Exception) {
-                    println("❌ Исключение при получении текста: ${e.message}")
-                    null
+                    if (e is kotlinx.coroutines.CancellationException) {
+                        println("⏹️ Загрузка текста отменена для трека: ${currentMusic.title}")
+                        return@launch
+                    }
+                    println("❌ Ошибка при извлечении метаданных: ${e.message}")
+                    _currentLyrics.postValue("Не удалось извлечь метаданные")
+                } finally {
+                    mmr.release()
+                    println("🔚 Завершена загрузка текста для трека: ${currentMusic.title}")
                 }
-
-                println("🎯 Результат получения текста: ${if (lyrics != null) "УСПЕХ" else "NULL"}")
-                _currentLyrics.postValue(lyrics ?: "Текст песни не найден 😔")
-
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                println("⏹️ Коррутина загрузки текста отменена")
             } catch (e: Exception) {
-                println("❌ Ошибка при извлечении метаданных: ${e.message}")
-                _currentLyrics.postValue("Не удалось извлечь метаданные")
-            } finally {
-                mmr.release()
-                println("🔚 Завершена загрузка текста")
+                println("❌ Неожиданная ошибка: ${e.message}")
+                _currentLyrics.postValue("Ошибка загрузки текста")
             }
         }
+    }
+
+    private fun cleanMetadata(text: String): String {
+        var cleaned = text.trim()
+        cleaned = cleaned.replace(Regex("\\.(mp3|m4a|flac|wav)$", RegexOption.IGNORE_CASE), "")
+        cleaned = cleaned.replace(Regex("\\s+"), " ")
+        return cleaned
     }
 
 
     fun clearLyrics() {
         lyricsLoadingJob?.cancel()
-        _currentLyrics.value = null
     }
     fun setMusicList(list: List<MusicData>) {
         _musicList.value = list
@@ -90,6 +128,7 @@ class SharedPlayerViewModel : ViewModel() {
     fun playMusic(context: Context, music: MusicData, fromFavourites: Boolean = false) {
         isPlayingFromFavourites = fromFavourites
         try {
+            clearLyrics()
             if (mediaPlayer == null) mediaPlayer = MediaPlayer()
 
             mediaPlayer!!.reset()
@@ -101,7 +140,24 @@ class SharedPlayerViewModel : ViewModel() {
             _isRewindRightOrClose.value = true
             val isInFavourites = _favouritesList.value?.any { it.id == music.id } ?: false
             _isFavouritesAdd.value = isInFavourites
-            clearLyrics()
+
+            if (fromFavourites) {
+                val favourites = _favouritesList.value ?: emptyList()
+                val indexInFavourites = favourites.indexOfFirst { it.id == music.id }
+                if (indexInFavourites != -1) {
+                    currentIndexInOrder = favouritesPlayOrder.indexOf(indexInFavourites)
+                    if (currentIndexInOrder == -1) currentIndexInOrder = 0
+                }
+            } else {
+                val list = _musicList.value ?: emptyList()
+                val indexInList = list.indexOfFirst { it.id == music.id }
+                if (indexInList != -1) {
+                    currentIndexInOrder = playOrder.indexOf(indexInList)
+                    if (currentIndexInOrder == -1) currentIndexInOrder = 0
+                }
+            }
+
+            loadLyricsForCurrentTrack(context)
 
             mediaPlayer!!.setOnCompletionListener {
                 _isPlaying.value = false
@@ -109,15 +165,9 @@ class SharedPlayerViewModel : ViewModel() {
                 nextMusic(context)
             }
 
-            val list = if (fromFavourites) _favouritesList.value ?: emptyList()
-            else _musicList.value ?: emptyList()
-            val order = if (fromFavourites) favouritesPlayOrder else playOrder
-
-            currentIndexInOrder = order.indexOfFirst { list[it].id == music.id }
-            if (currentIndexInOrder == -1) currentIndexInOrder = 0
-
         } catch (e: Exception) {
             e.printStackTrace()
+            clearLyrics()
         }
     }
 
@@ -158,14 +208,7 @@ class SharedPlayerViewModel : ViewModel() {
         _isFavouritesShuffled.value = newState
 
         playOrder = (_musicList.value?.indices?.toMutableList() ?: mutableListOf()).apply { if (newState) shuffle() }
-        favouritesPlayOrder = (_favouritesList.value?.indices?.toMutableList() ?: mutableListOf()).apply { if (newState) shuffle() }
-
-        val currentList = if (isPlayingFromFavourites) favouritesPlayOrder else playOrder
-        val currentMusicId = _currentMusic.value?.id
-        currentIndexInOrder = currentList.indexOfFirst { idx ->
-            val list = if (isPlayingFromFavourites) _favouritesList.value else _musicList.value
-            list?.get(idx)?.id == currentMusicId
-        }.takeIf { it != -1 } ?: 0
+        updateFavouritesPlayOrder()
     }
 
     fun nextMusic(context: Context) {
@@ -197,6 +240,21 @@ class SharedPlayerViewModel : ViewModel() {
         playMusic(context, prevTrack, false)
     }
 
+    fun updateFavouritesPlayOrder() {
+        val favourites = _favouritesList.value ?: emptyList()
+        favouritesPlayOrder = favourites.indices.toMutableList()
+        if (_isFavouritesShuffled.value == true) {
+            favouritesPlayOrder.shuffle()
+        }
+
+        _currentMusic.value?.let { currentMusic ->
+            val indexInFavourites = favourites.indexOfFirst { it.id == currentMusic.id }
+            if (indexInFavourites != -1) {
+                currentIndexInOrder = favouritesPlayOrder.indexOf(indexInFavourites)
+                if (currentIndexInOrder == -1) currentIndexInOrder = 0
+            }
+        }
+    }
     private fun nextFavouritesMusic(context: Context) {
         val list = _favouritesList.value ?: return
         if (list.isEmpty() || favouritesPlayOrder.isEmpty()) return
@@ -223,6 +281,7 @@ class SharedPlayerViewModel : ViewModel() {
             _favouritesList.value = current
             _isFavouritesAdd.value = true
             saveFavouritesToPrefs(context)
+            updateFavouritesPlayOrder()
         }
     }
 
@@ -232,8 +291,7 @@ class SharedPlayerViewModel : ViewModel() {
         _favouritesList.value = current
         _isFavouritesAdd.value = false
         saveFavouritesToPrefs(context)
-        favouritesPlayOrder = current.indices.toMutableList()
-        if (_isFavouritesShuffled.value == true) favouritesPlayOrder.shuffle()
+        updateFavouritesPlayOrder()
 
         if (_currentMusic.value?.id == music.id) {
             stopMusic()
@@ -273,15 +331,12 @@ class SharedPlayerViewModel : ViewModel() {
 
     fun loadFavouritesFromPrefs(context: Context) {
         val prefs = context.getSharedPreferences("favourites", Context.MODE_PRIVATE)
-        val savedIds =
-            prefs.getString("favourites_ids", "")?.split(",")?.mapNotNull { it.toLongOrNull() }
-                ?: emptyList()
+        val savedIds = prefs.getString("favourites_ids", "")?.split(",")?.mapNotNull { it.toLongOrNull() } ?: emptyList()
         val music = _musicList.value ?: emptyList()
         val favourites = music.filter { savedIds.contains(it.id) }
         _favouritesList.value = favourites
 
-        favouritesPlayOrder = favourites.indices.toMutableList()
-        if (_isFavouritesShuffled.value == true) favouritesPlayOrder.shuffle()
+        updateFavouritesPlayOrder()
 
         _currentMusic.value?.let { currentMusic ->
             val isInFavourites = favourites.any { it.id == currentMusic.id }

@@ -93,14 +93,32 @@ class PlayerFragment : Fragment() {
     }
     private fun setupLyricsObserver() {
         sharedPlayerViewModel.currentLyrics.observe(viewLifecycleOwner) { lyrics ->
-            binding.TextLyricsContent.text = lyrics ?: "Текст песни не найден"
+            if (lyrics != null) {
+                binding.TextLyricsContent.text = lyrics
+            }
+        }
+
+        sharedPlayerViewModel.currentMusic.observe(viewLifecycleOwner) { music ->
+            if (music != null) {
+                if (isLyricsVisible) {
+                    binding.TextLyricsContent.text = "🔄 Загружаем текст..."
+                }
+            } else {
+                binding.TextLyricsContent.text = ""
+            }
         }
     }
 
     private fun showLyricsPanel() {
         if (isLyricsVisible) return
 
-        sharedPlayerViewModel.loadLyricsForCurrentTrack(requireContext())
+        val currentMusic = sharedPlayerViewModel.currentMusic.value
+        if (currentMusic == null) {
+            binding.TextLyricsContent.text = "❌ Нет текущего трека"
+        } else {
+            binding.TextLyricsContent.text = "🔄 Загружаем текст..."
+            sharedPlayerViewModel.loadLyricsForCurrentTrack(requireContext())
+        }
 
         val panel = binding.LyricsPanel
         panel.apply {
@@ -161,8 +179,6 @@ class PlayerFragment : Fragment() {
                         tryApplyBlur(false)
                     }
                     .start()
-
-                sharedPlayerViewModel.clearLyrics()
 
                 onHidden?.invoke()
             }
