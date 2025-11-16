@@ -53,6 +53,7 @@ class PlayerFragment : Fragment() {
         observeRefreshState()
         setupMusicPanel()
         setupLyricsObserver()
+        setupPlaySourceObserver()
 
         binding.PanelMusic.translationY = binding.PanelMusic.height.toFloat()
 
@@ -89,6 +90,12 @@ class PlayerFragment : Fragment() {
                     showLyricsPanel()
                 }
             }
+        }
+    }
+
+    private fun setupPlaySourceObserver() {
+        sharedPlayerViewModel.currentPlaySource.observe(viewLifecycleOwner) { source ->
+            binding.MainFavSwitcher.text = "Играет из: $source"
         }
     }
     private fun setupLyricsObserver() {

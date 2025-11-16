@@ -36,6 +36,8 @@ class SharedPlayerViewModel : ViewModel() {
     private val _currentLyrics = MutableLiveData<String?>()
     val currentLyrics: LiveData<String?> get() = _currentLyrics
     private var lyricsLoadingJob: kotlinx.coroutines.Job? = null
+    private val _currentPlaySource = MutableLiveData<String>("Главная")
+    val currentPlaySource: LiveData<String> get() = _currentPlaySource
 
     fun loadLyricsForCurrentTrack(context: Context) {
         val currentMusic = _currentMusic.value ?: return
@@ -127,6 +129,7 @@ class SharedPlayerViewModel : ViewModel() {
 
     fun playMusic(context: Context, music: MusicData, fromFavourites: Boolean = false) {
         isPlayingFromFavourites = fromFavourites
+        _currentPlaySource.value = if (fromFavourites) "Избранное" else "Главная"
         try {
             clearLyrics()
             if (mediaPlayer == null) mediaPlayer = MediaPlayer()
