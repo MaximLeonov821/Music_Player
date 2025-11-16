@@ -91,68 +91,194 @@ class GeniusApiService(private val apiKey: String) {
                 .timeout(20000)
                 .get()
 
-            val allText = doc.text()
-            println("📄 Вся страница: ${allText.length} символов")
-
-            val startIndices = listOf(
-                allText.indexOf("[Verse"), allText.indexOf("[Chorus"),
-                allText.indexOf("[Intro"), allText.indexOf("[Hook"),
-                allText.indexOf("[Outro"), allText.indexOf("[Bridge")
-            ).filter { it != -1 }
-
-            if (startIndices.isEmpty()) return null
-
-            val songStart = startIndices.min()
-            println("🎵 Начало песни найдено на позиции: $songStart")
-
-            var songText = allText.substring(songStart)
-
-            if (songText.contains("You might also like")) {
-                val parts = songText.split("You might also like")
-                if (parts.size > 1) {
-                    val beforeAd = parts[0]
-                    val afterAd = parts[1]
-
-                    val nextTagIndex = afterAd.indexOf("[")
-                    if (nextTagIndex != -1) {
-                        songText = beforeAd + afterAd.substring(nextTagIndex)
-                        println("🔪 Вырезана реклама 'You might also like'")
-                    } else {
-                        songText = beforeAd
-                    }
-                }
+            val structuredText = tryGetStructuredLyrics(doc)
+            if (structuredText != null) {
+                println("✅ СТРУКТУРИРОВАННЫЙ ТЕКСТ: ${structuredText.length} символов")
+                return structuredText
             }
 
-            val endMarkers = listOf(
-                "Contributors",
-                "283Embed",
-                "How to Format Lyrics",
-                "About Song Bio",
-                "Expand",
-                "Genius Answer",
-                "Ask a question"
-            )
-
-            var endPosition = songText.length
-            for (marker in endMarkers) {
-                val markerIndex = songText.indexOf(marker)
-                if (markerIndex != -1) {
-                    endPosition = minOf(endPosition, markerIndex)
-                    println("🔪 Обрезаем КОНЕЦ по маркеру: '$marker'")
-                    break
-                }
-            }
-
-            songText = songText.substring(0, endPosition).trim()
-
-            println("✅ ЧИСТЫЙ ТЕКСТ ПЕСНИ: ${songText.length} символов")
-            println("📄 ТЕКСТ ПЕСНИ:\n$songText")
-            return songText
+            println("⚠️ Используем fallback метод")
+            return parseLyricsFallback(doc)
 
         } catch (e: Exception) {
             println("❌ Ошибка в parseLyrics: ${e.message}")
             null
         }
+    }
+
+    private fun tryGetStructuredLyrics(doc: org.jsoup.nodes.Document): String? {
+        return try {
+            val lyricsContainers = doc.select("div[data-lyrics-container=true]")
+            if (lyricsContainers.isEmpty()) return null
+
+            println("✅ Найдено контейнеров: ${lyricsContainers.size}")
+
+            val lyricsBuilder = StringBuilder()
+
+            for (container in lyricsContainers) {
+                val text = extractTextWithLineBreaks(container)
+                lyricsBuilder.append(text).append("\n\n")
+            }
+
+            var result = lyricsBuilder.toString().trim()
+
+            result = cleanWithOriginalLogic(result)
+
+            result = enhanceStructure(result)
+
+            println("📄 ПРЕВЬЮ ТЕКСТА:\n${result.take(500)}...")
+            result
+
+        } catch (e: Exception) {
+            println("❌ Ошибка в tryGetStructuredLyrics: ${e.message}")
+            null
+        }
+    }
+
+    private fun extractTextWithLineBreaks(element: org.jsoup.nodes.Element): String {
+        val html = element.html()
+
+        var text = html.replace(Regex("""<br\s*/?>"""), "\n")
+
+        text = text.replace(Regex("""<[^>]+>"""), "")
+
+        text = text.replace(Regex(" +"), " ")
+        text = text.replace(Regex(" *\n *"), "\n")
+
+        return text.trim()
+    }
+
+    private fun parseLyricsFallback(doc: org.jsoup.nodes.Document): String? {
+        val allText = doc.text()
+        println("📄 Вся страница: ${allText.length} символов")
+
+        val startIndices = listOf(
+            allText.indexOf("[Verse"), allText.indexOf("[Chorus"),
+            allText.indexOf("[Intro"), allText.indexOf("[Hook"),
+            allText.indexOf("[Outro"), allText.indexOf("[Bridge")
+        ).filter { it != -1 }
+
+        if (startIndices.isEmpty()) return null
+
+        val songStart = startIndices.min()
+        println("🎵 Начало песни найдено на позиции: $songStart")
+
+        var songText = allText.substring(songStart)
+
+        if (songText.contains("You might also like")) {
+            val parts = songText.split("You might also like")
+            if (parts.size > 1) {
+                val beforeAd = parts[0]
+                val afterAd = parts[1]
+
+                val nextTagIndex = afterAd.indexOf("[")
+                if (nextTagIndex != -1) {
+                    songText = beforeAd + afterAd.substring(nextTagIndex)
+                    println("🔪 Вырезана реклама 'You might also like'")
+                } else {
+                    songText = beforeAd
+                }
+            }
+        }
+
+        val endMarkers = listOf(
+            "Contributors",
+            "283Embed",
+            "How to Format Lyrics",
+            "About Song Bio",
+            "Expand",
+            "Genius Answer",
+            "Ask a question"
+        )
+
+        var endPosition = songText.length
+        for (marker in endMarkers) {
+            val markerIndex = songText.indexOf(marker)
+            if (markerIndex != -1) {
+                endPosition = minOf(endPosition, markerIndex)
+                println("🔪 Обрезаем КОНЕЦ по маркеру: '$marker'")
+                break
+            }
+        }
+
+        songText = songText.substring(0, endPosition).trim()
+
+        songText = enhanceStructure(songText)
+
+        println("✅ ЧИСТЫЙ ТЕКСТ ПЕСНИ: ${songText.length} символов")
+        println("📄 ТЕКСТ ПЕСНИ:\n$songText")
+        return songText
+    }
+
+    private fun cleanWithOriginalLogic(text: String): String {
+        var cleaned = text
+
+        val startIndices = listOf(
+            cleaned.indexOf("[Verse"), cleaned.indexOf("[Chorus"),
+            cleaned.indexOf("[Intro"), cleaned.indexOf("[Hook"),
+            cleaned.indexOf("[Outro"), cleaned.indexOf("[Bridge")
+        ).filter { it != -1 }
+
+        if (startIndices.isNotEmpty()) {
+            val songStart = startIndices.min()
+            cleaned = cleaned.substring(songStart)
+            println("🔪 Обрезано всё до начала песни")
+        }
+
+        if (cleaned.contains("You might also like")) {
+            val parts = cleaned.split("You might also like")
+            if (parts.size > 1) {
+                val beforeAd = parts[0]
+                val afterAd = parts[1]
+
+                val nextTagIndex = afterAd.indexOf("[")
+                if (nextTagIndex != -1) {
+                    cleaned = beforeAd + afterAd.substring(nextTagIndex)
+                    println("🔪 Вырезана реклама 'You might also like'")
+                } else {
+                    cleaned = beforeAd
+                }
+            }
+        }
+
+        val endMarkers = listOf(
+            "Contributors",
+            "283Embed",
+            "How to Format Lyrics",
+            "About Song Bio",
+            "Expand",
+            "Genius Answer",
+            "Ask a question"
+        )
+
+        var endPosition = cleaned.length
+        for (marker in endMarkers) {
+            val markerIndex = cleaned.indexOf(marker)
+            if (markerIndex != -1) {
+                endPosition = minOf(endPosition, markerIndex)
+                println("🔪 Обрезаем КОНЕЦ по маркеру: '$marker'")
+                break
+            }
+        }
+
+        cleaned = cleaned.substring(0, endPosition).trim()
+        return cleaned
+    }
+
+    private fun enhanceStructure(text: String): String {
+        var result = text
+
+        result = result.replace(Regex("\\[Intro\\]"), "━━━━━━━━━━━━━━━━━━━━\n🎤 INTRO\n━━━━━━━━━━━━━━━━━━━━")
+        result = result.replace(Regex("\\[Verse\\s*\\d*\\]"), "────────────────────\n🎵 VERSE\n────────────────────")
+        result = result.replace(Regex("\\[Chorus\\]"), "════════════════════\n🎶 CHORUS\n════════════════════")
+        result = result.replace(Regex("\\[Hook\\]"), "────────────────────\n🪝 HOOK\n────────────────────")
+        result = result.replace(Regex("\\[Bridge\\]"), "────────────────────\n🌉 BRIDGE\n────────────────────")
+        result = result.replace(Regex("\\[Outro\\]"), "━━━━━━━━━━━━━━━━━━━━\n👋 OUTRO\n━━━━━━━━━━━━━━━━━━━━")
+
+        result = result.trim()
+        result = result.replace(Regex("\n{3,}"), "\n\n")
+
+        return result
     }
 
     private fun String.encodeURL(): String =

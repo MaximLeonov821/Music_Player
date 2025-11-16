@@ -379,7 +379,7 @@
         android:visibility="gone"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="@+id/PlayerContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -387,17 +387,22 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp">
+            android:paddingTop="60dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp">
 
             <TextView
                 android:id="@+id/TextLyricsContent"
                 style="@style/TextAppearance.AppCompat.TextViewMusicStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:gravity="center"
-                android:lineSpacingExtra="4dp"
+                android:gravity="start"
+                android:lineSpacingExtra="8dp"
                 android:text="Здесь будет текст песни"
+                android:textIsSelectable="true"
+                android:breakStrategy="simple"
+                android:paddingTop="16dp"
                 tools:ignore="HardcodedText" />
         </ScrollView>
 
