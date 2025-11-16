@@ -81,13 +81,6 @@ class GeniusApiService(private val apiKey: String) {
             println("   ${index + 1}. ${hit.result?.url}")
         }
 
-        val isNonEnglish = artist.contains(Regex("[а-яА-Я]")) || title.contains(Regex("[а-яА-Я]"))
-
-        if (isNonEnglish) {
-            println("🌍 Обнаружен не-английский запрос, используем специальную логику")
-            return findUrlForNonEnglish(hits, artist, title)
-        }
-
         var bestUrl: String? = null
         var bestScore = -1000
 
@@ -102,89 +95,19 @@ class GeniusApiService(private val apiKey: String) {
             }
         }
 
-        return bestUrl
-    }
-
-    private fun findUrlForNonEnglish(
-        hits: List<GeniusHit>,
-        artist: String,
-        title: String
-    ): String? {
-        val translitArtist = transliterateToEnglish(artist)
-        val translitTitle = transliterateToEnglish(title)
-
-        println("🔤 Транслитерация: '$translitArtist' - '$translitTitle'")
-
-        val translitHit = hits.firstOrNull { hit ->
-            val url = hit.result?.url?.lowercase() ?: ""
-            url.contains(translitArtist.lowercase().replace(" ", "-")) ||
-                    url.contains(translitTitle.lowercase().replace(" ", "-"))
-        }
-
-        if (translitHit != null) {
-            println("✅ Найден URL по транслитерации: ${translitHit.result?.url}")
-            return translitHit.result?.url
-        }
-
-        val englishVersions = mapOf(
-            "виктор цой" to "kino",
-            "группа крови" to "blood type",
-            "кино" to "kino",
-            "владимир высоцкий" to "vladimir vysotsky",
-            "алла пугачева" to "alla pugacheva"
-        )
-
-        val engArtist = englishVersions[artist.lowercase()] ?: artist
-        val engTitle = englishVersions[title.lowercase()] ?: title
-
-        val englishHit = hits.firstOrNull { hit ->
-            val url = hit.result?.url?.lowercase() ?: ""
-            url.contains(engArtist.lowercase().replace(" ", "-")) ||
-                    url.contains(engTitle.lowercase().replace(" ", "-"))
-        }
-
-        if (englishHit != null) {
-            println("✅ Найден английский вариант: ${englishHit.result?.url}")
-            return englishHit.result?.url
-        }
-
-        var bestUrl: String? = null
-        var bestScore = -1000
-
-        hits.forEach { hit ->
-            val url = hit.result?.url ?: return@forEach
-            val score = calculateUrlScore(url, artist, title)
-            println("   📊 Оценка '$url': $score")
-
-            if (score > bestScore) {
-                bestScore = score
-                bestUrl = url
-            }
-        }
-
-        if (bestScore > -20) {
-            println("⚠️ Используем лучший найденный результат: $bestUrl")
+        if (bestScore > 0) {
+            println("✅ Используем лучший результат: $bestUrl")
             return bestUrl
         }
 
-        println("❌ Не найдено подходящих результатов для не-английского трека")
+        val firstUrl = hits.firstOrNull()?.result?.url
+        if (firstUrl != null) {
+            println("⚠️ Используем первый результат: $firstUrl")
+            return firstUrl
+        }
+
+        println("❌ Не найдено подходящих результатов")
         return null
-    }
-
-    private fun transliterateToEnglish(text: String): String {
-        val translitMap = mapOf(
-            'а' to "a", 'б' to "b", 'в' to "v", 'г' to "g", 'д' to "d",
-            'е' to "e", 'ё' to "yo", 'ж' to "zh", 'з' to "z", 'и' to "i",
-            'й' to "y", 'к' to "k", 'л' to "l", 'м' to "m", 'н' to "n",
-            'о' to "o", 'п' to "p", 'р' to "r", 'с' to "s", 'т' to "t",
-            'у' to "u", 'ф' to "f", 'х' to "kh", 'ц' to "ts", 'ч' to "ch",
-            'ш' to "sh", 'щ' to "shch", 'ъ' to "", 'ы' to "y", 'ь' to "",
-            'э' to "e", 'ю' to "yu", 'я' to "ya"
-        )
-
-        return text.lowercase().map { char ->
-            translitMap[char] ?: char.toString()
-        }.joinToString("")
     }
 
     private fun calculateUrlScore(url: String, artist: String, title: String): Int {
