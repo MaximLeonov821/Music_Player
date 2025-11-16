@@ -31,29 +31,51 @@ class SharedPlayerViewModel : ViewModel() {
     val isFavouritesShuffled: LiveData<Boolean> get() = _isFavouritesShuffled
     private var favouritesPlayOrder: MutableList<Int> = mutableListOf()
     private var currentIndexInOrder = 0
-    private val geniusApiService = GeniusApiService()
+    private val geniusApiService = GeniusApiService(GeniusApiKey.key)
     private val _currentLyrics = MutableLiveData<String?>()
     val currentLyrics: LiveData<String?> get() = _currentLyrics
     private var lyricsLoadingJob: kotlinx.coroutines.Job? = null
 
-    fun loadLyricsForCurrentTrack(artist: String, title: String) {
+    fun loadLyricsForCurrentTrack(context: Context) {
+        val currentMusic = _currentMusic.value ?: return
+
         lyricsLoadingJob?.cancel()
         lyricsLoadingJob = viewModelScope.launch {
-            _currentLyrics.postValue("🔍 Поиск текста через Genius...")
+            println("🚀 Начинаем загрузку текста для текущего трека...")
+            _currentLyrics.postValue("🔍 Ищем текст песни...")
+
+            val mmr = android.media.MediaMetadataRetriever()
             try {
-                val lyrics = geniusApiService.getLyrics(artist, title)
-                if (lyrics != null) {
-                    _currentLyrics.postValue(lyrics)
-                } else {
-                    _currentLyrics.postValue("""
-                        Текст песни не найден в базе Genius 😔
-                    """.trimIndent())
+                mmr.setDataSource(context, currentMusic.contentUri)
+                val artist = mmr.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_ARTIST) ?: ""
+                val title = mmr.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_TITLE) ?: ""
+
+                println("🎵 Метаданные трека:")
+                println("   👨‍🎤 Artist: '$artist'")
+                println("   🎵 Title: '$title'")
+                println("   🆔 Music ID: ${currentMusic.id}")
+
+                println("🌐 Запрашиваем текст через Genius API...")
+                val lyrics = try {
+                    geniusApiService.getLyrics(artist, title)
+                } catch (e: Exception) {
+                    println("❌ Исключение при получении текста: ${e.message}")
+                    null
                 }
+
+                println("🎯 Результат получения текста: ${if (lyrics != null) "УСПЕХ" else "NULL"}")
+                _currentLyrics.postValue(lyrics ?: "Текст песни не найден 😔")
+
             } catch (e: Exception) {
-                _currentLyrics.postValue("Ошибка загрузки из Genius: ${e.message}")
+                println("❌ Ошибка при извлечении метаданных: ${e.message}")
+                _currentLyrics.postValue("Не удалось извлечь метаданные")
+            } finally {
+                mmr.release()
+                println("🔚 Завершена загрузка текста")
             }
         }
     }
+
 
     fun clearLyrics() {
         lyricsLoadingJob?.cancel()

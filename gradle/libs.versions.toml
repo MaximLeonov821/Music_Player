@@ -12,6 +12,7 @@ constraintlayout = "2.2.1"
 lottie = "6.6.10"
 
 [libraries]
+jsoup = { module = "org.jsoup:jsoup", version = "1.17.2" }
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

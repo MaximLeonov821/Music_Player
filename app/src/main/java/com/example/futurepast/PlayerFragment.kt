@@ -100,14 +100,7 @@ class PlayerFragment : Fragment() {
     private fun showLyricsPanel() {
         if (isLyricsVisible) return
 
-        val currentMusic = sharedPlayerViewModel.currentMusic.value
-        if (currentMusic != null) {
-
-            sharedPlayerViewModel.loadLyricsForCurrentTrack(
-                currentMusic.author,
-                currentMusic.title
-            )
-        }
+        sharedPlayerViewModel.loadLyricsForCurrentTrack(requireContext())
 
         val panel = binding.LyricsPanel
         panel.apply {
@@ -464,7 +457,7 @@ class PlayerFragment : Fragment() {
                 if (fromUser) {
                     val duration = sharedPlayerViewModel.getDuration()
                     if (duration > 0) {
-                        updateSeekBarProgress(progress * duration / 100)
+                        updateSeekBarProgress(progress * duration / 100, duration)
                     }
                 }
             }
@@ -480,7 +473,7 @@ class PlayerFragment : Fragment() {
                     if (duration > 0) {
                         val newPos = seekBar.progress * duration / 100
                         sharedPlayerViewModel.seekTo(newPos)
-                        updateSeekBarProgress(newPos)
+                        updateSeekBarProgress(newPos, duration)
                     }
                 }
                 isUserSeeking = false
@@ -490,7 +483,7 @@ class PlayerFragment : Fragment() {
 
         sharedPlayerViewModel.currentMusic.observe(viewLifecycleOwner) { music ->
             if (music != null) {
-                updateSeekBarProgress(0)
+                updateSeekBarProgress(0, sharedPlayerViewModel.getDuration())
                 startUpdatingSeekBar()
             } else {
                 stopUpdatingSeekBar()
@@ -501,14 +494,23 @@ class PlayerFragment : Fragment() {
     private fun startUpdatingSeekBar() {
         seekBarUpdateJob?.cancel()
         seekBarUpdateJob = lifecycleScope.launch {
+            var cachedDuration = 0
+
             while (isActive) {
                 if (!isUserSeeking) {
                     val player = sharedPlayerViewModel.getPlayerInstance()
-                    if (player != null && player.duration > 0) {
-                        updateSeekBarProgress(player.currentPosition)
+                    if (player != null && player.isPlaying) {
+                        if (cachedDuration == 0) {
+                            cachedDuration = player.duration
+                        }
+
+                        val currentPosition = player.currentPosition
+                        if (cachedDuration > 0) {
+                            updateSeekBarProgress(currentPosition, cachedDuration)
+                        }
                     }
                 }
-                delay(300)
+                delay(1000)
             }
         }
     }
@@ -518,8 +520,7 @@ class PlayerFragment : Fragment() {
         seekBarUpdateJob = null
     }
 
-    private fun updateSeekBarProgress(position: Int) {
-        val duration = sharedPlayerViewModel.getDuration()
+    private fun updateSeekBarProgress(position: Int, duration: Int) {
         if (duration <= 0) return
         binding.musicSeekBar.progress = position * 100 / duration
         binding.totalTime.text = formatTime(position)

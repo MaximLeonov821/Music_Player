@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.jsoup)
     implementation("androidx.fragment:fragment-ktx:1.8.9")
     implementation(libs.lottie)
     implementation(libs.androidx.core.ktx)
@@ -51,6 +52,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
 }
