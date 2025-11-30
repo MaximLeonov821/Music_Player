@@ -72,7 +72,10 @@ class PlayerFragment : Fragment() {
         binding.HurtBtn.setOnClickListener {
             val currentMusic = sharedPlayerViewModel.currentMusic.value
             if (currentMusic != null) {
-                sharedPlayerViewModel.addToFavourites(requireContext(), currentMusic)
+                val isInFavourites = sharedPlayerViewModel.isFavouritesAdd.value ?: false
+
+                if (isInFavourites) sharedPlayerViewModel.removeFromFavourites(requireContext(), currentMusic)
+                else sharedPlayerViewModel.addToFavourites(requireContext(), currentMusic)
             }
         }
 

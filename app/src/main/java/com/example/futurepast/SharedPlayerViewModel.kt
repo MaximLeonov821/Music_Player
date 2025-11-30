@@ -296,7 +296,7 @@ class SharedPlayerViewModel : ViewModel() {
         saveFavouritesToPrefs(context)
         updateFavouritesPlayOrder()
 
-        if (_currentMusic.value?.id == music.id) {
+        if (_currentMusic.value?.id == music.id && isPlayingFromFavourites) {
             stopMusic()
             _currentMusic.value = null
         }

@@ -93,8 +93,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.HurtBtn.setOnClickListener {
             val currentMusic = sharedPlayerViewModel.currentMusic.value
-            if (currentMusic != null){
-                sharedPlayerViewModel.addToFavourites( this, currentMusic)
+            if (currentMusic != null) {
+                val isInFavourites = sharedPlayerViewModel.isFavouritesAdd.value ?: false
+
+                if (isInFavourites) sharedPlayerViewModel.removeFromFavourites(this, currentMusic)
+                else sharedPlayerViewModel.addToFavourites(this, currentMusic)
             }
         }
     }
