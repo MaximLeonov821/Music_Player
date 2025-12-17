@@ -7,7 +7,11 @@
 1) Язык написания программы: Kotlin;
 2) Среда разработки: Android Studio;
 3) Использолвание Genius API для онлайн-вытягивания текста для песен;
-4) Библиотеки: serialization для текста, lottie для анимаций обложек треков
+4) Библиотеки: serialization для текста, lottie для анимаций обложек треков;
+5) Дизайн оформлен в Figma.
+
+# Figma
+https://www.figma.com/design/ZRJOsxxlgMJTl0ivQRIiaA/Untitled?node-id=9-30&t=qlSy46TtcRG9hWdV-0
 
 # Скриншоты проекта:
 <img width="591" height="1280" alt="image" src="https://github.com/user-attachments/assets/6a0b3456-22df-4750-b1ad-ab83d76e6809" />
@@ -18,6 +22,3 @@
 <img width="591" height="1280" alt="image" src="https://github.com/user-attachments/assets/a02443fd-2273-494e-8b8c-d488f49339c6" />
 <img width="591" height="1280" alt="image" src="https://github.com/user-attachments/assets/b0a0b21f-dcb1-4a1d-85c5-b2589bf32bd3" />
 <img width="591" height="1280" alt="image" src="https://github.com/user-attachments/assets/32f136e9-4aab-431f-ae79-106af5e97de2" />
-
-# Figma
-https://www.figma.com/design/ZRJOsxxlgMJTl0ivQRIiaA/Untitled?node-id=9-30&t=qlSy46TtcRG9hWdV-0
